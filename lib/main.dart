@@ -1,8 +1,16 @@
-import 'package:eduklio/view/screens/login_screen.dart';
+
+import 'package:eduklio/presentation/pages/login_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+import 'firebase_options.dart';
+
+Future<void> main() async {
   runApp(const MyApp());
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
 }
 
 class MyApp extends StatelessWidget {
@@ -13,11 +21,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Eduklio',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
 
         primarySwatch: Colors.blue,
       ),
-      home: const MyLogin(),
+      home: MyLogin(),
     );
   }
 }

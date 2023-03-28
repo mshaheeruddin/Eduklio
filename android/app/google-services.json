@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "353804435927",
+    "project_id": "eduklio",
+    "storage_bucket": "eduklio.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:353804435927:android:ad69158907e45553528b92",
+        "android_client_info": {
+          "package_name": "com.eduklio.app.eduklio"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "353804435927-4ouokc0odk7u4e2am7l599upk0k5542n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBhJ3FK3KNZA8Xqk-iAcArOJDev160YPI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "353804435927-4ouokc0odk7u4e2am7l599upk0k5542n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

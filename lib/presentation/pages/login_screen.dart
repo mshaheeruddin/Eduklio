@@ -1,13 +1,22 @@
 
+import 'dart:developer';
+
+
+
 import 'package:flutter/cupertino.dart';
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../domain/usecases/signin_usecase.dart';
+import '../../domain/usecases/signin_usecase.dart';
 import '../components/MyFacebookButton.dart';
 import '../components/MyGoogleButton.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../domain/usecases/signin_usecase.dart';
 
+import 'home_screen.dart';
 
 class MyLogin extends StatefulWidget {
   const MyLogin({Key? key}) : super(key: key);
@@ -19,28 +28,12 @@ class MyLogin extends StatefulWidget {
 
 class _MyLoginState extends State<MyLogin> {
   final colorWhite = Color(0xFFFFFFFF);
-  final _scrollController = ScrollController();
-  double _columnPosition = 0;
+  SignInUseCase signInUseCase = SignInUseCase();
 
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(() {
-      final currentPosition = _scrollController.position.pixels;
-      final deviceHeight = MediaQuery.of(context).size.height;
-      final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-      final columnHeight =
-          deviceHeight - keyboardHeight - currentPosition - 50;
 
-      if (_columnPosition != columnHeight) {
-        setState(() {
-          _columnPosition = columnHeight;
-        });
-      }
-    });
-  }
   @override
   Widget build(BuildContext context) {
+
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
@@ -54,7 +47,6 @@ class _MyLoginState extends State<MyLogin> {
           body:Stack (
             children: [
               SingleChildScrollView(
-                controller: _scrollController,
                 physics: AlwaysScrollableScrollPhysics(),
                 child: Container(
                   padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.42,
@@ -65,6 +57,8 @@ class _MyLoginState extends State<MyLogin> {
                     children: [
 
                       TextField(
+
+                        controller: signInUseCase.emailController,
                         inputFormatters: [
                           LengthLimitingTextInputFormatter(50)
                         ],
@@ -83,6 +77,7 @@ class _MyLoginState extends State<MyLogin> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           TextField(
+                            controller: signInUseCase.passwordController,
                             inputFormatters: [
                               LengthLimitingTextInputFormatter(20)
                             ],
@@ -116,7 +111,7 @@ class _MyLoginState extends State<MyLogin> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           ElevatedButton(onPressed: () {
-                            print('pressed!');
+                               signInUseCase.login(context);
                           },
 
                               child: Text('LOGIN'),

@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
-
+import '../components/../../domain/usecases/signout_usecase.dart';
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
-
+  HomeScreen({Key? key}) : super(key: key);
+  Logout logout = Logout();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Text("HomeScreen"),
+        title: Text("Home"),
+        actions: [
+          IconButton(onPressed: () {
+            logout.logOut(context);
+          }, icon: Icon(Icons.exit_to_app)),
+        ],
+
       ),
     );
   }

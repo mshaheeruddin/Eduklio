@@ -1,6 +1,7 @@
 
 import 'package:eduklio/presentation/pages/home_screen.dart';
 import 'package:eduklio/presentation/pages/login_screen.dart';
+import 'package:eduklio/presentation/pages/welcome_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -8,10 +9,11 @@ import 'package:flutter/material.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  runApp(const MyApp());
 
 }
 
@@ -29,7 +31,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       //Basic User Persistence
-      home: (FirebaseAuth.instance.currentUser != null) ? HomeScreen() : MyLogin(),
+      home: (FirebaseAuth.instance.currentUser != null) ? HomeScreen() : WelcomeScreen(),
     );
   }
 }

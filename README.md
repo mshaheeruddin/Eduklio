@@ -1,4 +1,4 @@
-# Eduklio
+# Eduklio [IN PROGRESS ]
 Project for Mobile App Development (Flutter) course offered at my university - Spring 2023
 
 Eduklio - Eduklio  is an Education Center Management System designed to help educational centers streamline their administrative tasks. 

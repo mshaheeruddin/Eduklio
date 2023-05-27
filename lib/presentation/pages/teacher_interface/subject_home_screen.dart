@@ -58,7 +58,7 @@ class _SubjectScreenState extends State<SubjectScreen> {
             ),
           ),
           SizedBox(height: 30,),
-          _announceTextBox(announceToClass),
+          _announceTextBox(),
           Row(
            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -281,14 +281,11 @@ class _SubjectScreenState extends State<SubjectScreen> {
     return BlocBuilder<TextFieldAnnounceBloc, TextFieldAnnounceState>(
   builder: (context, state) {
     return ElevatedButton(
-      onPressed: () {
-
-        if(state is TextFieldAnnounceEmpty) {
-          return null;
-        }
-        repository.addAnnouncement(widget.className, announceToClass.text, repository.getUserUID());
-
-      }, child: Text('Share'), style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.black),
+      onPressed: (state is TextFieldEmptyState) ? null : () {
+      repository.addAnnouncement(
+          widget.className, announceToClass.text, repository.getUserUID());
+    }
+      , child: Text('Share'), style: ButtonStyle(backgroundColor: state is TextFieldEmptyState ?  MaterialStateProperty.all(Colors.grey) :  MaterialStateProperty.all(Colors.black),
       fixedSize: MaterialStateProperty.all(Size(MediaQuery.of(context).size.width * 0.25 , 40)),
       shape: MaterialStateProperty.all(RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30),
@@ -298,15 +295,20 @@ class _SubjectScreenState extends State<SubjectScreen> {
 );
   }
 
-  Widget _announceTextBox(TextEditingController textEditingController) {
+  Widget _announceTextBox() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: TextFormField(
+      child: BlocBuilder<TextFieldAnnounceBloc, TextFieldAnnounceState>(
+  builder: (context, state) {
+    return TextFormField(
+        onChanged: (value){
+          BlocProvider.of<TextFieldAnnounceBloc>(context).add(TextFieldChangedEvent(announceToClass.text));
+        },
         textInputAction: TextInputAction.next,
-         controller: textEditingController,
+         controller: announceToClass,
 
         decoration:  InputDecoration(
-          labelText:  'Announce to class',
+          labelText: 'Announce to class',
           labelStyle: TextStyle(),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(50)),
@@ -315,7 +317,9 @@ class _SubjectScreenState extends State<SubjectScreen> {
           ),
         ),
 
-      ),
+      );
+  },
+),
     );
   }
 

@@ -7,10 +7,13 @@ part 'text_field_announce_event.dart';
 part 'text_field_announce_state.dart';
 
 class TextFieldAnnounceBloc extends Bloc<TextFieldAnnounceEvent, TextFieldAnnounceState> {
-  TextFieldAnnounceBloc() : super(TextFieldAnnounceInitial()) {
+  TextFieldAnnounceBloc() : super(TextFieldEmptyState("Error")) {
     on<TextFieldChangedEvent>((event, emit) {
       if (event.announceStatement == "") {
-        emit(TextFieldAnnounceEmpty("ERROR: No field can be left empty"));
+        emit(TextFieldEmptyState("ERROR: No field can be left empty"));
+      }
+      else {
+        emit(TextFieldValidState());
       }
     });
   }

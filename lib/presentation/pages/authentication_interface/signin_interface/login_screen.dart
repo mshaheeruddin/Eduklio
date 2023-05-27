@@ -9,14 +9,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../domain/usecases/signin_usecase.dart';
-import '../../domain/usecases/signin_usecase.dart';
-import '../components/MyFacebookButton.dart';
-import '../components/MyGoogleButton.dart';
+import '../../../../domain/usecases/signin_usecase.dart';
+import '../../../../domain/usecases/signin_usecase.dart';
+import '../../../components/MyFacebookButton.dart';
+import '../../../components/MyGoogleButton.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../../domain/usecases/signin_usecase.dart';
-
-import 'home_screen.dart';
+import '../../../../domain/usecases/signin_usecase.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import '../../../components/MyTwitterButton.dart';
+import '../../welcome_interface/home_screen.dart';
 
 class MyLogin extends StatefulWidget {
   const MyLogin({Key? key}) : super(key: key);
@@ -171,7 +172,7 @@ class _MyLoginState extends State<MyLogin> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               MyFacebookButton(),
-                              Gap(1),
+                              MyTwitterButton(),
                               MyGoogleButton()
                             ],
                           ),

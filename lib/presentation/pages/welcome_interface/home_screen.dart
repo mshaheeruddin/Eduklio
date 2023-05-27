@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../components/../../domain/usecases/signout_usecase.dart';
+import '../../../domain/usecases/signout_usecase.dart';
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key}) : super(key: key);
   Logout logout = Logout();

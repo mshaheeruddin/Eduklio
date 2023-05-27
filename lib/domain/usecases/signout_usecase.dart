@@ -1,4 +1,4 @@
-import 'package:eduklio/presentation/pages/login_screen.dart';
+import 'package:eduklio/presentation/pages/authentication_interface/signin_interface/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 

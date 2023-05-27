@@ -1,5 +1,5 @@
-import 'package:eduklio/presentation/pages/signup_screen_student.dart';
-import 'package:eduklio/presentation/pages/signup_screen_teacher.dart';
+import 'package:eduklio/presentation/pages/authentication_interface/signup_interface/signup_screen_student.dart';
+import 'package:eduklio/presentation/pages/authentication_interface/signup_interface/signup_screen_teacher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,16 +15,15 @@ class _SignupAsState extends State<SignupAs> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.white,
+      color: Color.fromRGBO(255, 255, 255, 1.0),
       child: Padding(
         padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.4),
         child: Column(
           children: [
             Text(
-              'SIGNUP AS',
-              style: GoogleFonts.abel(
-                color: Colors.black,decoration: TextDecoration.none, fontSize: 40,
-              ),
+              'Signup as',
+              style: GoogleFonts.acme(color: Colors.black,decoration: TextDecoration.none, fontSize: 40, ),
+              textAlign: TextAlign.center,
 
 
             ),

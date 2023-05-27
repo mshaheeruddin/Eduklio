@@ -1,6 +1,6 @@
-import 'package:eduklio/presentation/pages/login_screen.dart';
-import 'package:eduklio/presentation/pages/signup_as_screen.dart';
-import 'package:eduklio/presentation/pages/signup_screen_teacher.dart';
+import 'package:eduklio/presentation/pages/authentication_interface/signin_interface/login_screen.dart';
+import 'package:eduklio/presentation/pages/authentication_interface/signup_interface/signup_as_screen.dart';
+import 'package:eduklio/presentation/pages/authentication_interface/signup_interface/signup_screen_teacher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';

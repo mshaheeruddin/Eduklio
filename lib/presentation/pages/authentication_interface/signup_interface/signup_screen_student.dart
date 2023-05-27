@@ -6,8 +6,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 
-import '../components/MyFacebookButton.dart';
-import '../components/MyGoogleButton.dart';
+import '../../../components/MyFacebookButton.dart';
+import '../../../components/MyGoogleButton.dart';
 
 class SignupStudent extends StatefulWidget {
   const SignupStudent({Key? key}) : super(key: key);
@@ -18,7 +18,7 @@ class SignupStudent extends StatefulWidget {
 
 class _SignupStudentState extends State<SignupStudent> {
   List<String> _selectedOptions = [];
-  final List<String> _options = ['Math', 'English', 'Computer Science'];
+  final List<String> _options = ['Male', 'Female'];
   @override
   Widget build(BuildContext context) {
     return Container(

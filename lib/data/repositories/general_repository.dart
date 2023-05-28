@@ -11,12 +11,18 @@ import 'package:uuid/uuid.dart';
 
 class Repository {
 
+  static final Repository _singleton = Repository._internal();
+  factory Repository() {
+    return _singleton;
+  }
+  Repository._internal();
+
+
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Repository() {}
   SignInUseCase signInUseCase = SignInUseCase();
-  //get data
 
+  //get data
   Future<void> getAllDocuments(String collectionName) async {
     //fetching all documents (only) not actual data
     //QuerySnapshot is a container for documents[Collection] (it contains it)
@@ -28,7 +34,6 @@ class Repository {
 
     }
   }
-
 
 
   Future<String> getSingleDocument(String collectionName, String docId) async {
@@ -67,12 +72,6 @@ class Repository {
     }*/
   }
 
-  //get current userId
-
-  Future<String> getCurrentUserId() async {
-
-    return getUserIdByEmail(signInUseCase.emailController.text).toString();
-  }
 
 //upload File
   String downloadURL = "";
@@ -111,22 +110,10 @@ class Repository {
     return null; // User UID not available
   }
 
-  //get userId
 
-  Future<String?> getUserIdByEmail(String email) async {
-    QuerySnapshot snapshot = await _firestore
-        .collection('users')
-        .where('email', isEqualTo: email)
-        .get();
 
-    if (snapshot.docs.isNotEmpty) {
-      return snapshot.docs.first.id; // Return the document ID of the first matching user
-    }
 
-    return null; // User with the provided email not found
-  }
-
-  //add data
+  /*//add data
   Future<void> addUser(String name, String email) async{
 
     Map<String, dynamic> newUserData = {
@@ -136,13 +123,14 @@ class Repository {
     await _firestore.collection("users").add(newUserData);
 
 
-    /*
+    *//*
          * If you want to give your own doc ID:
          * HERE WE USE `set`
          * await _firestore.collection("users").doc("your-doc-id-here").set(newUserData);
          * It will be created if doc doesn't exist.
-       */
-  }
+       *//*
+  }*/
+
 //announce to class
   Future<void> addAnnouncement(String className, String description, String? userId) async{
 

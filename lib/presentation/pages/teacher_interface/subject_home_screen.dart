@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:eduklio/data/repositories/repository.dart';
+import 'package:eduklio/data/repositories/general_repository.dart';
 import 'package:eduklio/domain/usecases/manageclass_usecase.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/bloc/bottombar_homescreen_bloc/text_field_announce_bloc.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/manage_class.dart';

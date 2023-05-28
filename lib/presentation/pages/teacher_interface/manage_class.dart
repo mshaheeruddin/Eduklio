@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../data/repositories/repository.dart';
+import '../../../data/repositories/general_repository.dart';
 import '../../../domain/entities/class.dart';
 import '../../../domain/usecases/manageclass_usecase.dart';
 import '../../dialogs/class_dialog.dart';

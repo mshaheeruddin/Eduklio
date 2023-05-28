@@ -1,4 +1,4 @@
-import 'package:eduklio/data/repositories/repository.dart';
+import 'package:eduklio/data/repositories/general_repository.dart';
 import 'package:eduklio/domain/usecases/signin_usecase.dart';
 import 'package:eduklio/presentation/widgets/futurebuilder_userid.dart';
 import 'package:flutter/cupertino.dart';

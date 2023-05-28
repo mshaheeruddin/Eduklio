@@ -1,7 +1,10 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eduklio/data/repositories/assignment_repository.dart';
 import 'package:eduklio/data/repositories/general_repository.dart';
+import 'package:eduklio/data/repositories/storage_repository.dart';
+import 'package:eduklio/data/repositories/user_repository.dart';
 import 'package:eduklio/domain/usecases/manageclass_usecase.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/bloc/bottombar_homescreen_bloc/text_field_announce_bloc.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/manage_class.dart';
@@ -32,7 +35,14 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
 
   _AssignmentScreenState();
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  Repository repository = Repository();
+
+  //reposoitory Instances
+  UserRepository userRepository = UserRepository();
+  StorageRepository storageRepository = StorageRepository();
+  AssignmentRepository assignmentRepository = AssignmentRepository();
+
+
+
   TextEditingController announceToClass = TextEditingController();
   String userId = "";
 
@@ -196,7 +206,7 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                         Padding(
                                           padding: const EdgeInsets.only(
                                               bottom: 12),
-                                          child: Text(repository.getUserName()!,
+                                          child: Text(userRepository.getUserName()!,
                                               style: TextStyle(fontSize: 18)),
                                         ),
                                         Padding(
@@ -204,7 +214,7 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                               left: 45, bottom: 15),
                                           child: IconButton(onPressed: () {
                                             //delete with specific document function comes
-                                            repository.deleteUser(
+                                            userRepository.deleteUser(
                                                 "teacher_assignments",
                                                 documentId);
                                           },
@@ -327,9 +337,9 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
       builder: (context, state) {
         return ElevatedButton(
           onPressed: (state is TextFieldEmptyState) ? null : () {
-            repository.uploadFile(pickedFile!);
-            repository.addAssignmentAnnouncement(
-                widget.className, announceToClass.text,repository.downloadURL,pickedFile,dueOn,repository.getUserUID());
+            storageRepository.uploadFile(pickedFile!);
+            assignmentRepository.addAssignmentAnnouncement(
+                widget.className, announceToClass.text,storageRepository.downloadURL,pickedFile,dueOn,userRepository.getUserUID());
 
           }
           , child: Text('Share'), style: ButtonStyle(backgroundColor: state is TextFieldEmptyState ?  MaterialStateProperty.all(Colors.grey) :  MaterialStateProperty.all(Colors.black),

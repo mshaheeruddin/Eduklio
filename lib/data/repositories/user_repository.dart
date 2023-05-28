@@ -90,12 +90,10 @@ class UserRepository {
       });
     }
 
+  }
 
-    //deleting
-    Future<void> deleteUser(String collectionName, String id) async {
-      await _firestore.collection(collectionName).doc(id).delete();
-    }
-
-
+  //deleting
+  Future<void> deleteUser(String collectionName, String id) async {
+    await _firestore.collection(collectionName).doc(id).delete();
   }
 }

@@ -41,10 +41,12 @@ class SignInUseCase  {
         UserCredential userCredential = await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: email,
             password: password);
+
+        String text = await userRepository.getFieldFromDocument(FirebaseAuth.instance.currentUser!.uid, "userType");
         if (userCredential.user != null) {
           Navigator.popUntil(context, (route) => route.isFirst);
           Navigator.pushReplacement(context,
-              CupertinoPageRoute(builder: (context) => TeacherHomeScreen()));
+              CupertinoPageRoute(builder: (context) => text == 'Teacher' ? TeacherHomeScreen() : StudentHomeScreen()));
         }
       } on FirebaseAuthException catch (ex) {
         log(ex.code.toString());

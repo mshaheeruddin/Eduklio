@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 
+import '../../../../domain/usecases/signup_usecase.dart';
 import '../../../components/MyFacebookButton.dart';
 import '../../../components/MyGoogleButton.dart';
 
@@ -17,6 +18,7 @@ class SignupStudent extends StatefulWidget {
 }
 
 class _SignupStudentState extends State<SignupStudent> {
+  SignUpUseCase signUpUseCase = SignUpUseCase();
   List<String> _selectedOptions = [];
   final List<String> _options = ['Male', 'Female'];
   @override
@@ -57,9 +59,10 @@ class _SignupStudentState extends State<SignupStudent> {
 
                       //Full Name
                       TextField(
+                        controller: signUpUseCase.studentNameController,
                         textInputAction: TextInputAction.next,
                         decoration: InputDecoration(
-                          hintText: 'Full Name',
+                            hintText: 'Full Name',
                             hintStyle: TextStyle(
                               color: Colors.black?.withOpacity(0.8),
                             )
@@ -67,6 +70,7 @@ class _SignupStudentState extends State<SignupStudent> {
                       ),
                       SizedBox(height: 5,),
                       TextField(
+                        controller: signUpUseCase.studentEmailController,
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
                         decoration: InputDecoration(
@@ -82,6 +86,7 @@ class _SignupStudentState extends State<SignupStudent> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           TextField(
+                            controller: signUpUseCase.studentPasswordController,
                             inputFormatters: [
                               LengthLimitingTextInputFormatter(20)
                             ],
@@ -95,6 +100,7 @@ class _SignupStudentState extends State<SignupStudent> {
                             ),
                           ),
                           TextField(
+                            controller: signUpUseCase.studentConfirmPasswordController,
                             inputFormatters: [
                               LengthLimitingTextInputFormatter(20)
                             ],
@@ -109,10 +115,11 @@ class _SignupStudentState extends State<SignupStudent> {
                           ),
                           SizedBox(height: 5),
                           TextField(
+                            controller: signUpUseCase.studentInstitutionNameController,
                             inputFormatters: [
                               LengthLimitingTextInputFormatter(20)
                             ],
-                            obscureText: true,
+
                             decoration: InputDecoration(
                                 hintText: 'Institution Name',
                                 hintStyle: TextStyle(
@@ -122,39 +129,39 @@ class _SignupStudentState extends State<SignupStudent> {
                             ),
                           ),
                           DropdownButtonFormField<String>(
-                            value: null,
-                            items: _options.map((String option) {
-                              return DropdownMenuItem<String>(
-                                value: option,
-                                child: Row(
-                                  children: <Widget>[
-                                    Checkbox(
-                                      value: _selectedOptions.contains(option),
-                                      onChanged: (bool? value) {
-                                        setState(() {
-                                          if (value == true) {
-                                            _selectedOptions.add(option);
-                                          } else {
-                                            _selectedOptions.remove(option);
-                                          }
-                                        });
-                                      },
-                                    ),
-                                    Text(option),
-                                  ],
-                                ),
-                              );
-                            }).toList(),
-                            onChanged: (String? value) {},
-                            hint: Text('Select courses'),
-                            decoration: InputDecoration(
-                                labelText: 'Courses'
-                            )),
-                            TextField(
+                              value: null,
+                              items: _options.map((String option) {
+                                return DropdownMenuItem<String>(
+                                  value: option,
+                                  child: Row(
+                                    children: <Widget>[
+                                      Checkbox(
+                                        value: _selectedOptions.contains(option),
+                                        onChanged: (bool? value) {
+                                          setState(() {
+                                            if (value == true) {
+                                              _selectedOptions.add(option);
+                                            } else {
+                                              _selectedOptions.remove(option);
+                                            }
+                                          });
+                                        },
+                                      ),
+                                      Text(option),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (String? value) {},
+                              hint: Text('Select Gender'),
+                              decoration: InputDecoration(
+                                  labelText: 'Gender'
+                              )),
+                          TextField(
                             inputFormatters: [
                               LengthLimitingTextInputFormatter(20)
                             ],
-                            obscureText: true,
+
                             decoration: InputDecoration(
                                 hintText: 'Grade Level',
                                 hintStyle: TextStyle(
@@ -173,7 +180,7 @@ class _SignupStudentState extends State<SignupStudent> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             ElevatedButton(onPressed: () {
-
+                              signUpUseCase.createStudentAccount(context,_selectedOptions[0]);
                             },
                               child: Text('SIGNUP'),
                               style: ButtonStyle(

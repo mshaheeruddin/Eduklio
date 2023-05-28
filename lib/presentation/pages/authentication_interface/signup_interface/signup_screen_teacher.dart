@@ -255,7 +255,7 @@ class _SignupTeacherState extends State<SignupTeacher> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             ElevatedButton(onPressed: () {
-                                    signUpUseCase.createAccount(context, true);
+                                    signUpUseCase.createTeacherAccount(context, _selectedOption);
                             },
                               child: Text('SIGNUP'),
                               style: ButtonStyle(

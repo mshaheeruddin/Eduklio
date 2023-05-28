@@ -15,13 +15,65 @@ class UserRepository {
 
   UserRepository._internal();
 
+
+
+
   //instances required
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  SignInUseCase signInUseCase = SignInUseCase();
+  //SignInUseCase signInUseCase = SignInUseCase();
 
 
   //methods
+
+  Future<dynamic> getFieldFromDocument(String documentId, String fieldName) async {
+    final documentSnapshot =
+    await FirebaseFirestore.instance.collection('users').doc(documentId).get();
+
+    if (documentSnapshot.exists) {
+      final data = documentSnapshot.data();
+      if (data != null && data.containsKey(fieldName)) {
+        return data[fieldName];
+      }
+    }
+
+    return null; // Field not found or document does not exist
+  }
+
+
+
+
+  Future<DocumentSnapshot<Map<String, dynamic>>?> getUserById(String userId) async {
+    final docSnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    if (docSnapshot.exists) {
+      return docSnapshot;
+    } else {
+      return null;
+    }
+  }
+
+
+
+  //add data
+  Future<void> addUser(String name, String email,String userId, String authProvider) async{
+
+    Map<String, dynamic> newUserData = {
+      "name": name,
+      "email": email,
+      "userId": userId,
+      "authProvider": authProvider,
+    };
+    await _firestore.collection("users").doc(userId).set(newUserData);
+
+
+    /*
+         * If you want to give your own doc ID:
+         * HERE WE USE `set`
+         * await _firestore.collection("users").doc("your-doc-id-here").set(newUserData);
+         * It will be created if doc doesn't exist.
+       */
+  }
+
 
 
 // get user type
@@ -47,6 +99,15 @@ class UserRepository {
     }*/
   }
 
+  String? getGoogleUserUID() {
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      return user.uid;
+    }
+
+    return null; // User UID not available
+  }
+
   String? getUserUID() {
     final User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
@@ -64,6 +125,14 @@ class UserRepository {
     return null; // User UID not available
   }
 
+  String? getUserFirstName() {
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+
+      return firstNameFormatter(user.displayName!);
+    }
+    return null; // User UID not available
+  }
 
   //updating teacher user credentials
   Future<void> updateTeacherUserCredentials(String name, String email) async {
@@ -91,9 +160,29 @@ class UserRepository {
     }
 
   }
+  //add a field to doc
+  Future<void> addFieldToDocument(String documentId, String fieldName, dynamic fieldValue) async {
+    final documentReference = FirebaseFirestore.instance.collection("users").doc(documentId);
+
+    await documentReference.update({
+      fieldName: fieldValue,
+    });
+  }
 
   //deleting
   Future<void> deleteUser(String collectionName, String id) async {
     await _firestore.collection(collectionName).doc(id).delete();
+  }
+
+  //only first name
+  String? firstNameFormatter(String name) {
+    String fname = "";
+    for(int i =0; i< name.length;i++) {
+      if(!(name[i] == " ")) {
+        fname = fname + name[i];
+      }
+      else break;
+    }
+    return fname;
   }
 }

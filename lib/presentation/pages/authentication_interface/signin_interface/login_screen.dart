@@ -173,7 +173,7 @@ class _MyLoginState extends State<MyLogin> {
                             children: [
                               MyFacebookButton(),
                               MyTwitterButton(),
-                              MyGoogleButton()
+                              MyGoogleButton(loginScreenContext: context,)
                             ],
                           ),
                         ],

@@ -1,3 +1,4 @@
+import 'package:eduklio/data/repositories/user_repository.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/class_schedule_screen.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/bottombar.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/manage_class.dart';
@@ -9,6 +10,7 @@ import '../../../domain/usecases/signout_usecase.dart';
 
 class TeacherHomeScreen extends StatelessWidget {
   Logout logout = Logout();
+  UserRepository userRepository = UserRepository();
  final ClassManager classManager = ClassManager();
   @override
   Widget build(BuildContext context) {
@@ -102,10 +104,12 @@ class TeacherHomeScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width:8,),
-                  Text(
-                      'Hi, Shaheer',
-                    style: GoogleFonts.adventPro(fontSize: 30),
-                    textAlign: TextAlign.end,
+                  SafeArea(
+                    child: Text(
+                        'Hi, ${userRepository.getUserFirstName()}',
+                      style: GoogleFonts.adventPro(fontSize: 30),
+                      textAlign: TextAlign.end,
+                    ),
                   ),
                 ],
               ),

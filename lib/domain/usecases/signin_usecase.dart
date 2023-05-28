@@ -2,6 +2,11 @@ import 'dart:developer';
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eduklio/data/repositories/user_repository.dart';
+import 'package:eduklio/presentation/components/MyGoogleButton.dart';
+import 'package:eduklio/presentation/pages/authentication_interface/signin_interface/signin_as_screen.dart';
+import 'package:eduklio/presentation/pages/student_interface/student_homescreen.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,6 +22,10 @@ class SignInUseCase  {
   TextEditingController passwordController= TextEditingController();
 
   SignInUseCase();
+  UserRepository userRepository =  UserRepository();
+
+
+
 
 
   void login(BuildContext context) async {
@@ -116,12 +125,38 @@ class SignInUseCase  {
       idToken: googleAuth?.idToken,
     );
 
-    await FirebaseAuth.instance.signInWithCredential(credential);
-    Navigator.popUntil(context, (route) => route.isFirst);
-    Navigator.pushReplacement(context,
-        CupertinoPageRoute(builder: (context) => TeacherHomeScreen()));
+    final user = await FirebaseAuth.instance.signInWithCredential(credential);
 
+    // Check if the user is already added in Firestore
+    final userDoc = await userRepository.getUserById(user.user!.uid);
+    bool isUserDocNull = userDoc == null;
+    log(isUserDocNull.toString());
+    if (isUserDocNull) {
+      // User is not yet added, so add the user to Firestore
+      userRepository.addUser(
+        googleUser!.displayName!,
+        googleUser!.email,
+        FirebaseAuth.instance.currentUser!.uid,
+        "Google",
+      );
+      Navigator.popUntil(context, (route) => route.isFirst);
+      Navigator.pushReplacement(
+        context,
+        CupertinoPageRoute(builder: (context) => SignInAs()),
+      );
+    } else {
+      String text = await userRepository.getFieldFromDocument(FirebaseAuth.instance.currentUser!.uid, "userType");
+      Navigator.popUntil(context, (route) => route.isFirst);
+      Navigator.pushReplacement(
+        context,
+        CupertinoPageRoute(builder: (context) =>  text == 'Teacher' ? TeacherHomeScreen() : StudentHomeScreen(),
+      ));
+    }
   }
+
+
+  //add to field to doc
+
 
   Future<String?> getGoogleUserEmail() async {
     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();

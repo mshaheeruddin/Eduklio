@@ -34,13 +34,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<TextFieldAnnounceBloc>(
           create: (context) => TextFieldAnnounceBloc(),
         ),
-
-        /*BlocProvider<BlocA>(
-        create: (context) => BlocA(),
-      ),
-        BlocProvider<BlocB>(
-          create: (context) => BlocB(),
-        ),*/],
+      ],
       child: MaterialApp(
         title: 'Eduklio',
         debugShowCheckedModeBanner: false,
@@ -49,7 +43,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         //Basic User Persistence
-        home: (FirebaseAuth.instance.currentUser != null) ? TeacherHomeScreen() : WelcomeScreen(),
+        home: WelcomeScreen(),
       ),
     );
   }

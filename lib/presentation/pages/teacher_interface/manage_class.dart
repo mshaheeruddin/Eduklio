@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eduklio/data/repositories/user_repository.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/bottombar.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/subject_home_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:twitter_login/entity/user.dart';
 
 import '../../../data/repositories/general_repository.dart';
 import '../../../domain/entities/class.dart';
@@ -31,7 +33,9 @@ class _ManageClassState extends State<ManageClass> {
 
 
 
-    Repository repository = Repository();
+    UserRepository userRepository = UserRepository();
+
+
     //streambuilder to get
     Widget realTimeDisplayOfAdding(BuildContext context) {
       return StreamBuilder<QuerySnapshot>(
@@ -53,7 +57,7 @@ class _ManageClassState extends State<ManageClass> {
                     //get users document id
                     String documentId = snapshot.data!.docs[index].id;
 
-                    if(repository.getUserUID() == userMap["userId"]) {
+                    if(userRepository.getUserUID() == userMap["userId"]) {
                       return Card(
                         elevation: 10,
                         shadowColor: Colors.black,
@@ -73,7 +77,7 @@ class _ManageClassState extends State<ManageClass> {
                                     style: TextStyle(fontSize: 15)),
                                 trailing: IconButton(onPressed: () {
                                   //delete with specific document function comes
-                                  repository.deleteUser(
+                                  userRepository.deleteUser(
                                       "teacher_classes", documentId);
                                 },
                                   icon: Icon(Icons.delete),

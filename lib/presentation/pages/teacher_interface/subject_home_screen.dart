@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eduklio/data/repositories/class_repository.dart';
 import 'package:eduklio/data/repositories/general_repository.dart';
+import 'package:eduklio/data/repositories/user_repository.dart';
 import 'package:eduklio/domain/usecases/manageclass_usecase.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/bloc/bottombar_homescreen_bloc/text_field_announce_bloc.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/manage_class.dart';
@@ -28,7 +30,10 @@ class _SubjectScreenState extends State<SubjectScreen> {
 
   _SubjectScreenState();
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  Repository repository = Repository();
+
+  UserRepository userRepository = UserRepository();
+  ClassRepository classRepository = ClassRepository();
+
   TextEditingController announceToClass = TextEditingController();
   String userId = "";
   @override
@@ -192,7 +197,7 @@ class _SubjectScreenState extends State<SubjectScreen> {
                                         Padding(
                                           padding: const EdgeInsets.only(
                                               bottom: 12),
-                                          child: Text(repository.getUserName()!,
+                                          child: Text(userRepository.getUserName()!,
                                               style: TextStyle(fontSize: 18)),
                                         ),
                                         Padding(
@@ -200,7 +205,7 @@ class _SubjectScreenState extends State<SubjectScreen> {
                                               left: 45, bottom: 15),
                                           child: IconButton(onPressed: () {
                                             //delete with specific document function comes
-                                            repository.deleteUser(
+                                            userRepository.deleteUser(
                                                 "teacher_announcements",
                                                 documentId);
                                           },
@@ -282,8 +287,8 @@ class _SubjectScreenState extends State<SubjectScreen> {
   builder: (context, state) {
     return ElevatedButton(
       onPressed: (state is TextFieldEmptyState) ? null : () {
-      repository.addAnnouncement(
-          widget.className, announceToClass.text, repository.getUserUID());
+      classRepository.addAnnouncement(
+          widget.className, announceToClass.text, userRepository.getUserUID());
     }
       , child: Text('Share'), style: ButtonStyle(backgroundColor: state is TextFieldEmptyState ?  MaterialStateProperty.all(Colors.grey) :  MaterialStateProperty.all(Colors.black),
       fixedSize: MaterialStateProperty.all(Size(MediaQuery.of(context).size.width * 0.25 , 40)),

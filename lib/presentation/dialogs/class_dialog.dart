@@ -1,4 +1,6 @@
+import 'package:eduklio/data/repositories/class_repository.dart';
 import 'package:eduklio/data/repositories/general_repository.dart';
+import 'package:eduklio/data/repositories/user_repository.dart';
 import 'package:eduklio/domain/usecases/signin_usecase.dart';
 import 'package:eduklio/presentation/widgets/futurebuilder_userid.dart';
 import 'package:flutter/cupertino.dart';
@@ -32,7 +34,8 @@ class _ClassDialogState extends State<ClassDialog> {
   @override
   Widget build(BuildContext context) {
 
-    Repository repository = Repository();
+    UserRepository userRepository = UserRepository();
+    ClassRepository classRepository = ClassRepository();
 
     return AlertDialog(
       title: Text('Add Class'),
@@ -63,7 +66,7 @@ class _ClassDialogState extends State<ClassDialog> {
               setState(() {
                 widget.classManager.addClass(newClass);
               });
-              repository.addClass(className,classCode, repository.getUserUID());
+              classRepository.addClass(className,classCode, userRepository.getUserUID());
               Navigator.pop(context); // Close the dialog
             }
           },

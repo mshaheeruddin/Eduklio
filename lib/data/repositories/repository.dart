@@ -1,29 +1,31 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eduklio/domain/usecases/signin_usecase.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:uuid/uuid.dart';
 
 class Repository {
 
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Repository() {
-
-  }
-SignInUseCase signInUseCase = SignInUseCase();
+  Repository() {}
+  SignInUseCase signInUseCase = SignInUseCase();
   //get data
 
   Future<void> getAllDocuments(String collectionName) async {
     //fetching all documents (only) not actual data
     //QuerySnapshot is a container for documents[Collection] (it contains it)
     QuerySnapshot snapshot = await _firestore.collection(collectionName).get();
-    log(snapshot.docs.toString());
+
     //get data from snapshot that holds the document
     //so do doc.data() to get data inside document
     for(var doc in snapshot.docs) {
-      log(doc.data().toString());
+
     }
   }
 
@@ -43,6 +45,28 @@ SignInUseCase signInUseCase = SignInUseCase();
     }
   }
 
+  Future<String?> getUserType(String collectionName, String userName) async {
+
+    QuerySnapshot snapshot = await _firestore.collection(collectionName).get();
+
+    String userType ="";
+    for(var doc in snapshot.docs) {
+      Map<String, dynamic> userMap = doc.data() as Map<String, dynamic>;
+      if(userMap["name"] == userName) {
+        userType = userMap["userType"];
+      }
+      return userType;
+    }
+    /*if (snapshot.exists) {
+      // Document exists
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+      return data.toString();
+    } else {
+      // Document does not exist
+      return "Document not found";
+    }*/
+  }
+
   //get current userId
 
   Future<String> getCurrentUserId() async {
@@ -50,7 +74,22 @@ SignInUseCase signInUseCase = SignInUseCase();
     return getUserIdByEmail(signInUseCase.emailController.text).toString();
   }
 
-
+//upload File
+  String downloadURL = "";
+  Future uploadFile(PlatformFile? pickedFile) async {
+    final path = 'files/${Uuid().v1()}/${pickedFile!.name}';
+    log(path.toString());
+    final file = File(pickedFile!.path!);
+    log(file.toString());
+    final ref = FirebaseStorage.instance.ref().child(path);
+    log(ref.toString());
+    UploadTask uploadTask = ref.putFile(file);
+    log(uploadTask.toString());
+    TaskSnapshot taskSnapshot = await uploadTask;
+    log(taskSnapshot.toString());
+    downloadURL = await taskSnapshot.ref.getDownloadURL();
+    log(downloadURL);
+  }
 
   //get user uid
 
@@ -95,7 +134,7 @@ SignInUseCase signInUseCase = SignInUseCase();
       "email": email,
     };
     await _firestore.collection("users").add(newUserData);
-    log('New User Saved');
+
 
     /*
          * If you want to give your own doc ID:
@@ -114,6 +153,22 @@ SignInUseCase signInUseCase = SignInUseCase();
 
     };
     await _firestore.collection("teacher_announcements").add(newUserData);
+
+  }
+
+//
+  Future<void> addAssignmentAnnouncement(String className, String description,String downloadURL,PlatformFile? platformFile, String? dueOn, String? userId) async{
+
+    Map<String, dynamic> newUserData = {
+      "className": className,
+      "description": description,
+      "assignmentFileName": platformFile!.name,
+      "assignment": downloadURL,
+      "dueDate": dueOn,
+      "userId": userId,
+
+    };
+    await _firestore.collection("teacher_assignments").add(newUserData);
 
   }
 

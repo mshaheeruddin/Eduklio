@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eduklio/data/repositories/repository.dart';
 import 'package:eduklio/domain/usecases/manageclass_usecase.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/bloc/bottombar_homescreen_bloc/text_field_announce_bloc.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/manage_class.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,7 +27,8 @@ class AssignmentScreen extends StatefulWidget {
 
 class _AssignmentScreenState extends State<AssignmentScreen> {
 
-
+  PlatformFile? pickedFile;
+  String? dueOn;
 
   _AssignmentScreenState();
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -201,7 +205,7 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                           child: IconButton(onPressed: () {
                                             //delete with specific document function comes
                                             repository.deleteUser(
-                                                "teacher_announcements",
+                                                "teacher_assignments",
                                                 documentId);
                                           },
                                             icon: Icon(Icons.delete),),
@@ -212,12 +216,21 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                   SizedBox(height: 10,),
                                 ],
                               ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 12),
-                                child: Text(userMap["description"] == null
-                                    ? ""
-                                    : userMap["description"],
-                                    style: TextStyle(fontSize: 15)),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 12),
+                                    child: Text('Posted an assignment: ${userMap["assignmentFileName"]} due on: ${userMap["dueDate"]}',
+                                        style: TextStyle(fontSize: 15)),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 12),
+                                    child: Text('Additional Instructions: ${userMap["description"]}',
+                                        style: TextStyle(fontSize: 15)),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -253,23 +266,55 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
     ).then((value) {
       setState(() {
         _dateTime = value!;
-        /*dateController.text = _dateTime.day.toString() + " " +
+        dueOn = _dateTime.day.toString() + " " +
             _monthFormatter(_dateTime.month) + " " +
-            _dateTime.year.toString();*/
+            _dateTime.year.toString();
       });
     });
   }
 
 
+
+  //selectFile
+
+  Future selectFile() async {
+    final result = await FilePicker.platform.pickFiles();
+    if (result == null) return;
+
+    setState(() {
+      pickedFile = result.files.first;
+    });
+  }
+  String shortenFileName(String fileName, int maxLength) {
+    if (fileName.length <= maxLength) {
+      return fileName;
+    } else {
+      String nameWithoutExtension = fileName.substring(0, fileName.lastIndexOf('.'));
+      String extension = fileName.substring(fileName.lastIndexOf('.'));
+
+      String shortenedName = nameWithoutExtension.substring(0, maxLength - extension.length - 3) + '...' + extension;
+      return shortenedName;
+    }
+  }
+
   //schedule a class
   Widget _scheduleClassButton() {
     return Row(
       children: [
-        IconButton(onPressed: (){
-          _showDatePicker();
-        }, icon: FaIcon(FontAwesomeIcons.add)),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 14),
+          child: IconButton(onPressed: (){
+            _showDatePicker();
+          }, icon: FaIcon(FontAwesomeIcons.calendar)),
+        ),
         SizedBox(width: 1,),
-        Text('Schedule a class')
+        Column(
+          children: [
+            ElevatedButton(onPressed: selectFile, child: Text('Select File')),
+
+            if (pickedFile != null) Text(shortenFileName(pickedFile!.name, 20), maxLines: 2, overflow: TextOverflow.fade,)
+          ],
+        )
       ],
     );
   }
@@ -282,8 +327,10 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
       builder: (context, state) {
         return ElevatedButton(
           onPressed: (state is TextFieldEmptyState) ? null : () {
-            repository.addAnnouncement(
-                widget.className, announceToClass.text, repository.getUserUID());
+            repository.uploadFile(pickedFile!);
+            repository.addAssignmentAnnouncement(
+                widget.className, announceToClass.text,repository.downloadURL,pickedFile,dueOn,repository.getUserUID());
+
           }
           , child: Text('Share'), style: ButtonStyle(backgroundColor: state is TextFieldEmptyState ?  MaterialStateProperty.all(Colors.grey) :  MaterialStateProperty.all(Colors.black),
             fixedSize: MaterialStateProperty.all(Size(MediaQuery.of(context).size.width * 0.25 , 40)),

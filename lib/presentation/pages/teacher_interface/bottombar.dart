@@ -3,6 +3,7 @@ import 'dart:core';
 
 
 import 'package:eduklio/domain/usecases/manageclass_usecase.dart';
+import 'package:eduklio/presentation/pages/teacher_interface/assignment_screen.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/attendance_screen.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/bloc/bottombar_homescreen_bloc/text_field_announce_bloc.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/subject_home_screen.dart';
@@ -38,7 +39,7 @@ Widget getSubjectWidget() {
   create: (context) => TextFieldAnnounceBloc(),
   child: SubjectScreen(widget.className),
 ),
-      const Text("Assignments"),
+      AssignmentScreen(widget.className),
       AttendanceScreen(),
       const Text("Profile")
     ];

@@ -130,8 +130,8 @@ class SignInUseCase  {
     final user = await FirebaseAuth.instance.signInWithCredential(credential);
 
     // Check if the user is already added in Firestore
-    final userDoc = await userRepository.getUserById(user.user!.uid);
-    bool isUserDocNull = userDoc == null;
+    final userDocFromUsers = await userRepository.getUserById(user.user!.uid,"users");
+    bool isUserDocNull = userDocFromUsers == null;
     log(isUserDocNull.toString());
     if (isUserDocNull) {
       // User is not yet added, so add the user to Firestore
@@ -141,6 +141,17 @@ class SignInUseCase  {
         FirebaseAuth.instance.currentUser!.uid,
         "Google",
       );
+      bool isTeacher = await userRepository.getFieldFromDocument(user.user!.uid, "userType") == 'Teacher' ? true : false;
+      final userDocFromTeachers = await userRepository.getUserById(user.user!.uid,"teachers");
+      bool isTeacherDocNull = userDocFromTeachers == null;
+
+      if (isTeacherDocNull && isTeacher) {
+        userRepository.addTeacherUser(googleUser!.displayName!, googleUser!.email, FirebaseAuth.instance.currentUser!.uid, "Google");
+      }
+      if (isTeacherDocNull && !isTeacher) {
+        userRepository.addStudentUser(googleUser!.displayName!, googleUser!.email, FirebaseAuth.instance.currentUser!.uid, "Google");
+      }
+
       Navigator.popUntil(context, (route) => route.isFirst);
       Navigator.pushReplacement(
         context,

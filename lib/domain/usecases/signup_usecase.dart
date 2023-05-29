@@ -65,8 +65,8 @@ class SignUpUseCase  {
       await _firestore
           .collection('users').doc(userCredential.user?.uid)
           .set({'first name': fname,'last Name: ': lname,'email': email, 'password': password, 'userType': 'Teacher', 'schoolName': schoolName,
-        'gender':selectedGender,'teachingExperience':teachingExperience, 'qualification': qualification});
-
+        'gender':selectedGender,'teachingExperience':teachingExperience, 'qualification': qualification, 'students': []});
+      userRepository.addTeacherUser(fname, email, userCredential.user!.uid, "local");
       log("User Created");
     }
   }
@@ -105,8 +105,10 @@ class SignUpUseCase  {
         'password': password,
         'userType': 'Student',
         'schoolName': schoolName,
-        'gradeLevel': gradeLevel});
+        'gradeLevel': gradeLevel,
+          'teachers': []});
       log("Student User Created");
+      userRepository.addStudentUser(name, email, userCredential.user!.uid, "local");
     }
   }
 

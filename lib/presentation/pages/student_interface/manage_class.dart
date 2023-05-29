@@ -272,14 +272,11 @@ class _ManageClassStudentState extends State<ManageClassStudent> {
               BlocProvider.of<EnrollBloc>(context).add(EnrollButtonPressedEvent(true, selectedSubject, selectedTeacher));
               teacherSubjectMap[selectedTeacher] = selectedSubject;
 
-              /*if(userRepository.getFieldFromDocument(FirebaseAuth.instance.currentUser!.uid, "teachers") != 'teacher') {
+              if(userRepository.getFieldFromDocument(FirebaseAuth.instance.currentUser!.uid, "teachers") != 'teacher') {
                 userRepository.addFieldToDocument(FirebaseAuth.instance.currentUser!.uid, "teachers", [selectedTeacher]);
               }
-              else {
 
-              }
-
-              userRepository.addFieldToDocument(FirebaseAuth.instance.currentUser!.uid, "subjects", [selectedSubject]);*/
+              userRepository.addFieldToDocument(FirebaseAuth.instance.currentUser!.uid, "subjects", [selectedSubject]);
               Navigator.of(context).pop();
             });
   },

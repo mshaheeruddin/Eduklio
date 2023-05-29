@@ -50,9 +50,9 @@ class UserRepository {
 
 
 
-
-  Future<DocumentSnapshot<Map<String, dynamic>>?> getUserById(String userId) async {
-    final docSnapshot = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+  //return id of user
+  Future<DocumentSnapshot<Map<String, dynamic>>?> getUserById(String userId, String collectionName) async {
+    final docSnapshot = await FirebaseFirestore.instance.collection(collectionName).doc(userId).get();
     if (docSnapshot.exists) {
       return docSnapshot;
     } else {
@@ -82,7 +82,45 @@ class UserRepository {
        */
   }
 
+  //add teacher to teacher collection
+  Future<void> addTeacherUser(String name, String email,String userId, String authProvider) async{
 
+    Map<String, dynamic> newUserData = {
+      "name": name,
+      "email": email,
+      "students": [],
+      "userId": userId,
+    };
+    await _firestore.collection("teachers").doc(userId).set(newUserData);
+
+
+    /*
+         * If you want to give your own doc ID:
+         * HERE WE USE `set`
+         * await _firestore.collection("users").doc("your-doc-id-here").set(newUserData);
+         * It will be created if doc doesn't exist.
+       */
+  }
+
+  Future<void> addStudentUser(String name, String email,String userId, String authProvider) async{
+
+    Map<String, dynamic> newUserData = {
+      "name": name,
+      "email": email,
+      "teachers": [],
+      "userId": userId,
+
+    };
+    await _firestore.collection("students").doc(userId).set(newUserData);
+
+
+    /*
+         * If you want to give your own doc ID:
+         * HERE WE USE `set`
+         * await _firestore.collection("users").doc("your-doc-id-here").set(newUserData);
+         * It will be created if doc doesn't exist.
+       */
+  }
 
 // get user type
 

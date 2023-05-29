@@ -1,5 +1,9 @@
+import 'package:eduklio/domain/usecases/manage_student_class_usecase.dart';
+import 'package:eduklio/presentation/pages/student_interface/bloc/enroll_bloc/enroll_bloc.dart';
+import 'package:eduklio/presentation/pages/student_interface/manage_class.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../data/repositories/user_repository.dart';
@@ -19,7 +23,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
 
   UserRepository userRepository = UserRepository();
 
-  final ClassManager classManager = ClassManager();
+  final ClassManagerStudent classManager = ClassManagerStudent();
 
   Future<void> retrieveUserName() async {
     String? userDisplayName = await userRepository.getUserFirstName();
@@ -180,7 +184,10 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                   child: InkWell(
                     onTap: () {
                       // Navigate to the attendance screen
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => ManageClass(classManager: classManager)));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => BlocProvider(
+  create: (context) => EnrollBloc(),
+  child: ManageClassStudent(),
+)));
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -257,7 +264,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Manage Attendance',
+                                'Attendance Portal',
                                 style: GoogleFonts.aBeeZee(fontSize: 20),
                               ),
                               Icon(Icons.people, size: 20.0),

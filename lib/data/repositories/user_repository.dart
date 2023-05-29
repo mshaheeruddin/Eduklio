@@ -40,6 +40,14 @@ class UserRepository {
     return null; // Field not found or document does not exist
   }
 
+  Future<void> addUserToTeachersArray(String userId) async {
+    final userRef = FirebaseFirestore.instance.collection('users').doc(userId);
+
+    await userRef.update({
+      'teachers': FieldValue.arrayUnion([userId]),
+    });
+  }
+
 
 
 

@@ -1,5 +1,6 @@
 
 import 'package:eduklio/presentation/pages/animated.dart';
+import 'package:eduklio/presentation/pages/student_interface/bloc/enroll_bloc/enroll_bloc.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/bloc/bottombar_homescreen_bloc/text_field_announce_bloc.dart';
 import 'package:eduklio/presentation/pages/welcome_interface/home_screen.dart';
 import 'package:eduklio/presentation/pages/authentication_interface/signin_interface/login_screen.dart';
@@ -34,6 +35,9 @@ class MyApp extends StatelessWidget {
         BlocProvider<TextFieldAnnounceBloc>(
           create: (context) => TextFieldAnnounceBloc(),
         ),
+        BlocProvider<EnrollBloc> (
+          create: (context) => EnrollBloc(),
+        )
       ],
       child: MaterialApp(
         title: 'Eduklio',

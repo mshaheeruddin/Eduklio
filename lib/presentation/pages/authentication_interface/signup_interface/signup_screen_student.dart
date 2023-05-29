@@ -161,7 +161,7 @@ class _SignupStudentState extends State<SignupStudent> {
                             inputFormatters: [
                               LengthLimitingTextInputFormatter(20)
                             ],
-
+                            controller: signUpUseCase.studentGradeLevelController,
                             decoration: InputDecoration(
                                 hintText: 'Grade Level',
                                 hintStyle: TextStyle(

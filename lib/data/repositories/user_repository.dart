@@ -124,15 +124,21 @@ class UserRepository {
     }
     return null; // User UID not available
   }
-
-  String? getUserFirstName() {
+  Future<String?> getUserFirstName() async {
     final User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-
-      return firstNameFormatter(user.displayName!);
+      final userId = user.uid;
+      final userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+      if (userDoc.exists) {
+        final name = userDoc.get('name');
+        if (name != null) {
+          return firstNameFormatter(name);
+        }
+      }
     }
-    return null; // User UID not available
+    return null; // User UID not available or name field is not set
   }
+
 
   //updating teacher user credentials
   Future<void> updateTeacherUserCredentials(String name, String email) async {

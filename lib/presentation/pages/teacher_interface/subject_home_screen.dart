@@ -205,7 +205,7 @@ class _SubjectScreenState extends State<SubjectScreen> {
                                               left: 45, bottom: 15),
                                           child: IconButton(onPressed: () {
                                             //delete with specific document function comes
-                                            userRepository.deleteUser(
+                                            userRepository.deleteSomethingFromCollection(
                                                 "teacher_announcements",
                                                 documentId);
                                           },

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eduklio/data/repositories/class_repository.dart';
 import 'package:eduklio/data/repositories/user_repository.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/bottombar.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/subject_home_screen.dart';
@@ -35,7 +36,7 @@ class _ManageClassState extends State<ManageClass> {
 
 
     UserRepository userRepository = UserRepository();
-
+    ClassRepository classRepository = ClassRepository();
 
     //streambuilder to get
     Widget realTimeDisplayOfAdding(BuildContext context) {
@@ -78,7 +79,9 @@ class _ManageClassState extends State<ManageClass> {
                                     style: TextStyle(fontSize: 15)),
                                 trailing: IconButton(onPressed: () {
                                   //delete with specific document function comes
-                                  userRepository.deleteUser("teacher_classes", documentId);
+                                  userRepository.deleteSomethingFromCollection("teacher_classes", documentId);
+                                  classRepository.deleteArrayValueFromCollection("teachers", documentId, FirebaseAuth.instance.currentUser!.uid);
+                                  classRepository.deleteArrayValueFromCollection("users", documentId, FirebaseAuth.instance.currentUser!.uid);
 
                                 },
                                   icon: Icon(Icons.delete),

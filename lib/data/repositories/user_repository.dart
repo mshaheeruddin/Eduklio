@@ -233,7 +233,7 @@ class UserRepository {
   }
 
   //deleting
-  Future<void> deleteUser(String collectionName, String id) async {
+  Future<void> deleteSomethingFromCollection(String collectionName, String id) async {
     await _firestore.collection(collectionName).doc(id).delete();
   }
 

@@ -82,7 +82,7 @@ class _ManageClassStudentState extends State<ManageClassStudent> {
                                     style: TextStyle(fontSize: 15)),
                                 trailing: IconButton(onPressed: () {
                                   //delete with specific document function comes
-                                  userRepository.deleteUser(
+                                  userRepository.deleteSomethingFromCollection(
                                       "teacher_classes", documentId);
                                 },
                                   icon: Icon(Icons.delete),

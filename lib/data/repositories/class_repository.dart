@@ -35,6 +35,14 @@ UserRepository userRepository = UserRepository();
 
   }
 
+  void deleteArrayValueFromCollection(String collectionName,String classId, String teacherId) async {
+    // Remove the class ID from the teacher's array in the teachers collection
+    await FirebaseFirestore.instance.collection(collectionName).doc(teacherId).update({
+      'classes': FieldValue.arrayRemove([classId]),
+    });
+  }
+
+
   //deleting class
   Future<void> deleteClass(String collectionName,String id) async{
     await _firestore.collection(collectionName).doc(id).delete();

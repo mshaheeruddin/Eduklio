@@ -36,6 +36,28 @@ class Repository {
     return teacherIds;
   }
 
+  //go to all documents
+  //check its teacher's array
+  //see if given doc exists
+  //remove it
+//get all teachers id
+  Future<void> checkAllAndDoAction(String collectionName, String arrayName, String valueOfConcern, String operation) async {
+    // Fetch all documents in the collection
+    QuerySnapshot snapshot = await FirebaseFirestore.instance.collection(collectionName).get();
+
+    // Iterate over each document
+    for (var doc in snapshot.docs) {
+      // Get the data inside the document
+      var data = doc.data();
+    }
+
+
+  }
+
+
+
+
+
 
   //get all students data
   Future getAllStudents() async {

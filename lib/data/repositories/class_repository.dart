@@ -19,6 +19,28 @@ UserRepository userRepository = UserRepository();
   }
 
 
+  //getClass
+  //get all classes data
+  Future<List<String>> getAllClasses(String collectionName) async {
+    //fetching all documents (only) not actual data
+    //QuerySnapshot is a container for documents[Collection] (it contains it)
+    QuerySnapshot snapshot = await _firestore.collection(collectionName).get();
+    List<String> classesIds = [];
+    List<String> availableClasses = [];
+    //get data from snapshot that holds the document
+    //so do doc.data() to get data inside document
+    for(var doc in snapshot.docs) {
+      classesIds.add(doc.id);
+    }
+
+    for(var classid in classesIds) {
+      availableClasses.add(userRepository.getFieldFromDocument(classid, "className") as String);
+    }
+
+    return availableClasses;
+
+  }
+
   //add class
   Future<void> addClass(String className, String classCode, String? userId) async{
 

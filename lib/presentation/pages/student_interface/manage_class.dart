@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eduklio/data/repositories/class_repository.dart';
 import 'package:eduklio/data/repositories/user_repository.dart';
 import 'package:eduklio/domain/usecases/manage_student_class_usecase.dart';
 import 'package:eduklio/presentation/dialogs/class_dialogue_enroll.dart';
@@ -26,17 +27,31 @@ class ManageClassStudent extends StatefulWidget {
   String className = "";
   ManageClassStudent();
 
+
   @override
   _ManageClassStudentState createState() => _ManageClassStudentState(className);
+
+
+
 }
 
+
 class _ManageClassStudentState extends State<ManageClassStudent> {
+
   @override
+  Future<void> initState() async {
+    // TODO: implement initState
+    super.initState();
+    availableClasses = await classRepository.getAllClasses("teacher_classes");
+  }
+
   String className = "";
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+
   _ManageClassStudentState(this.className);
   UserRepository userRepository = UserRepository();
+  ClassRepository classRepository = ClassRepository();
   Widget build(BuildContext context) {
 
 
@@ -187,7 +202,7 @@ class _ManageClassStudentState extends State<ManageClassStudent> {
   }
   String selectedSubject = "";
   bool _selected = false;
-  List<String> availableClasses = ['Urdu', 'Maths'];
+  List<String> availableClasses = [];
   List<String> enrolledClasses = [];
 
 

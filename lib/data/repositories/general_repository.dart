@@ -73,19 +73,7 @@ class Repository {
     return studentIds;
   }
 
-  //get all classes data
-  Future getAllClasses() async {
-    //fetching all documents (only) not actual data
-    //QuerySnapshot is a container for documents[Collection] (it contains it)
-    QuerySnapshot snapshot = await _firestore.collection("teacher_classes").get();
-    List<String> classes = [];
-    //get data from snapshot that holds the document
-    //so do doc.data() to get data inside document
-    for(var doc in snapshot.docs) {
-      classes.add(doc.id);
-    }
-    return classes;
-  }
+
 
 
 

@@ -196,6 +196,15 @@ class _ManageClassStudentState extends State<ManageClassStudent> {
   List<String> availableTeachers = ['Shaheer', 'Rafay'];
   List<String> teacherSelected = [];
 
+  //populate available teachers
+  void _populateTeachersList() {
+
+
+
+  }
+
+
+
   Map<String, String> teacherSubjectMap = {};
   void _showAlertBox() async {
     await showDialog(
@@ -273,10 +282,10 @@ class _ManageClassStudentState extends State<ManageClassStudent> {
               teacherSubjectMap[selectedTeacher] = selectedSubject;
 
               if(userRepository.getFieldFromDocument(FirebaseAuth.instance.currentUser!.uid, "teachers") != 'teacher') {
-                userRepository.addFieldToDocument(FirebaseAuth.instance.currentUser!.uid, "teachers", [selectedTeacher]);
+                userRepository.addFieldToDocument("users",FirebaseAuth.instance.currentUser!.uid, "teachers", [selectedTeacher]);
               }
 
-              userRepository.addFieldToDocument(FirebaseAuth.instance.currentUser!.uid, "subjects", [selectedSubject]);
+              userRepository.addFieldToDocument("users",FirebaseAuth.instance.currentUser!.uid, "subjects", [selectedSubject]);
               Navigator.of(context).pop();
             });
   },

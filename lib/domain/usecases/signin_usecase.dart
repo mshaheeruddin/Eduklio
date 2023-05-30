@@ -141,16 +141,7 @@ class SignInUseCase  {
         FirebaseAuth.instance.currentUser!.uid,
         "Google",
       );
-      bool isTeacher = await userRepository.getFieldFromDocument(user.user!.uid, "userType") == 'Teacher' ? true : false;
-      final userDocFromTeachers = await userRepository.getUserById(user.user!.uid,"teachers");
-      bool isTeacherDocNull = userDocFromTeachers == null;
 
-      if (isTeacherDocNull && isTeacher) {
-        userRepository.addTeacherUser(googleUser!.displayName!, googleUser!.email, FirebaseAuth.instance.currentUser!.uid, "Google");
-      }
-      if (isTeacherDocNull && !isTeacher) {
-        userRepository.addStudentUser(googleUser!.displayName!, googleUser!.email, FirebaseAuth.instance.currentUser!.uid, "Google");
-      }
 
       Navigator.popUntil(context, (route) => route.isFirst);
       Navigator.pushReplacement(
@@ -165,6 +156,19 @@ class SignInUseCase  {
         CupertinoPageRoute(builder: (context) =>  text == 'Teacher' ? TeacherHomeScreen() : StudentHomeScreen(),
       ));
     }
+
+    /*final userDocFromTeachers = await userRepository.getUserById(user.user!.uid,"teachers");
+    bool isTeacher = await userRepository.getFieldFromDocument(user.user!.uid, "userType") == 'Teacher' ? true : false;
+    bool isTeacherDocNull = userDocFromTeachers == null;
+    log(isTeacherDocNull.toString()); //true
+    log((isTeacherDocNull && isTeacher).toString()); //false
+    log(isTeacher.toString()); //false
+    if (isTeacherDocNull && isTeacher) {
+      userRepository.addTeacherUser(googleUser!.displayName!, googleUser!.email, FirebaseAuth.instance.currentUser!.uid, "Google");
+    }
+    else {
+      userRepository.addStudentUser(googleUser!.displayName!, googleUser!.email, FirebaseAuth.instance.currentUser!.uid, "Google");
+    }*/
   }
 
 

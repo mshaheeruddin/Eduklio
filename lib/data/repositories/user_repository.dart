@@ -40,11 +40,20 @@ class UserRepository {
     return null; // Field not found or document does not exist
   }
 
-  Future<void> addUserToTeachersArray(String userId) async {
-    final userRef = FirebaseFirestore.instance.collection('users').doc(userId);
+  Future<void> addToArray(String userId,String collectionName, String fieldName,String valueToAdd) async {
+    final userRef = FirebaseFirestore.instance.collection(collectionName).doc(userId);
 
     await userRef.update({
-      'teachers': FieldValue.arrayUnion([userId]),
+      fieldName: FieldValue.arrayUnion([valueToAdd]),
+    });
+  }
+
+
+  Future<void> removeFromArray(String userId, String collectionName, String fieldName, String valueToRemove) async {
+    final userRef = FirebaseFirestore.instance.collection(collectionName).doc(userId);
+
+    await userRef.update({
+      fieldName: FieldValue.arrayRemove([valueToRemove])
     });
   }
 
@@ -89,6 +98,7 @@ class UserRepository {
       "name": name,
       "email": email,
       "students": [],
+      "classes": [],
       "userId": userId,
     };
     await _firestore.collection("teachers").doc(userId).set(newUserData);
@@ -108,6 +118,7 @@ class UserRepository {
       "name": name,
       "email": email,
       "teachers": [],
+      "classes": [],
       "userId": userId,
 
     };
@@ -213,8 +224,8 @@ class UserRepository {
 
   }
   //add a field to doc
-  Future<void> addFieldToDocument(String documentId, String fieldName, dynamic fieldValue) async {
-    final documentReference = FirebaseFirestore.instance.collection("users").doc(documentId);
+  Future<void> addFieldToDocument(String collectionName, String documentId, String fieldName, dynamic fieldValue,) async {
+    final documentReference = FirebaseFirestore.instance.collection(collectionName).doc(documentId);
 
     await documentReference.update({
       fieldName: fieldValue,

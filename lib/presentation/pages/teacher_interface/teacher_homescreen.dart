@@ -8,10 +8,34 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../domain/usecases/manageclass_usecase.dart';
 import '../../../domain/usecases/signout_usecase.dart';
 
-class TeacherHomeScreen extends StatelessWidget {
+class TeacherHomeScreen extends StatefulWidget {
+  @override
+  State<TeacherHomeScreen> createState() => _TeacherHomeScreenState();
+}
+
+class _TeacherHomeScreenState extends State<TeacherHomeScreen> {
   Logout logout = Logout();
+
   UserRepository userRepository = UserRepository();
+
  final ClassManager classManager = ClassManager();
+
+ String userName = "";
+
+  Future<void> retrieveUserName() async {
+    String? userDisplayName = await userRepository.getUserFirstName();
+    setState(() {
+      userName = userDisplayName!;
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    retrieveUserName();
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -106,7 +130,7 @@ class TeacherHomeScreen extends StatelessWidget {
                   SizedBox(width:8,),
                   SafeArea(
                     child: Text(
-                        'Hi, ${userRepository.getUserFirstName()}',
+                        'Hi, ${userName}',
                       style: GoogleFonts.adventPro(fontSize: 30),
                       textAlign: TextAlign.end,
                     ),
@@ -256,5 +280,4 @@ class TeacherHomeScreen extends StatelessWidget {
     );
 
   }
-
 }

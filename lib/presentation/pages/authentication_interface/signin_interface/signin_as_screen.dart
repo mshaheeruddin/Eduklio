@@ -7,6 +7,7 @@ import 'package:eduklio/presentation/pages/authentication_interface/signup_inter
 import 'package:eduklio/presentation/pages/authentication_interface/signup_interface/signup_screen_teacher.dart';
 import 'package:eduklio/presentation/pages/student_interface/student_homescreen.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/teacher_homescreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -48,7 +49,10 @@ class _SignInAsState extends State<SignInAs> {
               widget.isTeacher = true;
               String? userId = userRepository.getUserUID();
               log(userId!);
-              userRepository.addFieldToDocument(userId!,"userType", "Teacher");
+              userRepository.addFieldToDocument("users",userId!,"userType", "Teacher");
+              userRepository.addFieldToDocument("users",userId!,"students", []);
+              userRepository.addFieldToDocument("users",userId!,"classes", []);
+              userRepository.addTeacherUser(FirebaseAuth.instance.currentUser!.displayName!,FirebaseAuth.instance.currentUser!.email!, FirebaseAuth.instance.currentUser!.uid, "Google");
               Navigator.push(context, MaterialPageRoute(builder: (context) => TeacherHomeScreen()));
             },
 
@@ -72,7 +76,10 @@ class _SignInAsState extends State<SignInAs> {
             ElevatedButton(onPressed: () {
               widget.isTeacher = false;
               String? userId = userRepository.getUserUID();
-              userRepository.addFieldToDocument(userId!,"userType", "student");
+              userRepository.addFieldToDocument("users",userId!,"userType", "student");
+              userRepository.addFieldToDocument("users",userId!,"teachers", []);
+              userRepository.addFieldToDocument("users",userId!,"classes", []);
+              userRepository.addStudentUser(FirebaseAuth.instance.currentUser!.displayName!,FirebaseAuth.instance.currentUser!.email!, FirebaseAuth.instance.currentUser!.uid, "Google");
               Navigator.push(context, MaterialPageRoute(builder: (context) => StudentHomeScreen()));
             },
 

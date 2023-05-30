@@ -1,8 +1,22 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eduklio/data/repositories/user_repository.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 
 class ClassRepository {
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+UserRepository userRepository = UserRepository();
+
+  //get current Time
+  String getCurrentTime() {
+    DateTime currentTime = DateTime.now();
+    String formattedTime = DateFormat.jm().format(currentTime);
+    return formattedTime;
+  }
 
 
   //add class
@@ -11,10 +25,13 @@ class ClassRepository {
     Map<String, dynamic> newUserData = {
       "className": className,
       "classCode": classCode,
-      "userId": userId,
-
+      "userId": FirebaseAuth.instance.currentUser!.uid,
+      "studentsEnrolled": [],
+      "createdAt": getCurrentTime()
     };
-    await _firestore.collection("teacher_classes").add(newUserData);
+    DocumentReference documentReference = await _firestore.collection("teacher_classes").add(newUserData);
+    userRepository.addToArray(FirebaseAuth.instance.currentUser!.uid, "users", "classes", documentReference.id);
+    userRepository.addToArray(FirebaseAuth.instance.currentUser!.uid, "teachers", "classes", documentReference.id);
 
   }
 
@@ -25,14 +42,12 @@ class ClassRepository {
 
 //announce to class
   Future<void> addAnnouncement(String className, String description, String? userId) async{
-
     Map<String, dynamic> newUserData = {
       "className": className,
       "description": description,
-      "userId": userId,
-
+      "timeStamp": getCurrentTime(),
     };
-    await _firestore.collection("teacher_announcements").add(newUserData);
+    await _firestore.collection("teacher_announcements").doc(FirebaseAuth.instance.currentUser!.uid).set(newUserData);
 
   }
 }

@@ -106,7 +106,8 @@ class SignUpUseCase  {
         'userType': 'Student',
         'schoolName': schoolName,
         'gradeLevel': gradeLevel,
-          'teachers': []});
+          'teachers': [],
+          'classes':[]});
       log("Student User Created");
       userRepository.addStudentUser(name, email, userCredential.user!.uid, "local");
     }

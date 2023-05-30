@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eduklio/data/repositories/user_repository.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/bottombar.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/subject_home_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -57,7 +58,7 @@ class _ManageClassState extends State<ManageClass> {
                     //get users document id
                     String documentId = snapshot.data!.docs[index].id;
 
-                    if(userRepository.getUserUID() == userMap["userId"]) {
+                    if(FirebaseAuth.instance.currentUser!.uid == userRepository.getUserUID()) {
                       return Card(
                         elevation: 10,
                         shadowColor: Colors.black,
@@ -77,8 +78,8 @@ class _ManageClassState extends State<ManageClass> {
                                     style: TextStyle(fontSize: 15)),
                                 trailing: IconButton(onPressed: () {
                                   //delete with specific document function comes
-                                  userRepository.deleteUser(
-                                      "teacher_classes", documentId);
+                                  userRepository.deleteUser("teacher_classes", documentId);
+
                                 },
                                   icon: Icon(Icons.delete),
 

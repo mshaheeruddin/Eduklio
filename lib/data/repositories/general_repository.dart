@@ -22,21 +22,66 @@ class Repository {
 
   SignInUseCase signInUseCase = SignInUseCase();
 
-  //get data
-  Future<void> getAllDocuments(String collectionName) async {
+  //get all teachers id
+  Future getAllTeachers() async {
     //fetching all documents (only) not actual data
     //QuerySnapshot is a container for documents[Collection] (it contains it)
-    QuerySnapshot snapshot = await _firestore.collection(collectionName).get();
-
+    QuerySnapshot snapshot = await _firestore.collection("teachers").get();
+    List<String> teacherIds = [];
     //get data from snapshot that holds the document
     //so do doc.data() to get data inside document
     for(var doc in snapshot.docs) {
-
+            teacherIds.add(doc.id);
     }
+    return teacherIds;
   }
 
 
+  //get all students data
+  Future getAllStudents() async {
+    //fetching all documents (only) not actual data
+    //QuerySnapshot is a container for documents[Collection] (it contains it)
+    QuerySnapshot snapshot = await _firestore.collection("students").get();
+    List<String> studentIds = [];
+    //get data from snapshot that holds the document
+    //so do doc.data() to get data inside document
+    for(var doc in snapshot.docs) {
+      studentIds.add(doc.id);
+    }
+    return studentIds;
+  }
+
+  //get all classes data
+  Future getAllClasses() async {
+    //fetching all documents (only) not actual data
+    //QuerySnapshot is a container for documents[Collection] (it contains it)
+    QuerySnapshot snapshot = await _firestore.collection("teacher_classes").get();
+    List<String> classes = [];
+    //get data from snapshot that holds the document
+    //so do doc.data() to get data inside document
+    for(var doc in snapshot.docs) {
+      classes.add(doc.id);
+    }
+    return classes;
+  }
+
+
+
   Future<String> getSingleDocument(String collectionName, String docId) async {
+    DocumentSnapshot snapshot =
+    await _firestore.collection(collectionName).doc(docId).get();
+
+    if (snapshot.exists) {
+      // Document exists
+      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+      return data.toString();
+    } else {
+      // Document does not exist
+      return "Document not found";
+    }
+  }
+
+  Future<String> getTeacherClasses(String collectionName, String docId) async {
     DocumentSnapshot snapshot =
     await _firestore.collection(collectionName).doc(docId).get();
 

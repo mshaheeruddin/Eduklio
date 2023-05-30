@@ -21,7 +21,7 @@ UserRepository userRepository = UserRepository();
 
   //getClass
   //get all classes data
-  Future<List<String>> getAllClasses(String collectionName) async {
+  Future<List<String>> getAllClasses(String collectionName, bool byName) async {
     //fetching all documents (only) not actual data
     //QuerySnapshot is a container for documents[Collection] (it contains it)
     QuerySnapshot snapshot = await _firestore.collection(collectionName).get();
@@ -40,13 +40,13 @@ UserRepository userRepository = UserRepository();
       } );
     }
 
-    return availableClasses;
-
+    if(byName) {return availableClasses;}
+    return classesIds;
   }
 
 
   //get all teachers data
-  Future<List<String>> getAllTeachers(String collectionName) async {
+  Future<List<String>> getAllTeachers(String collectionName, bool byName) async {
     //fetching all documents (only) not actual data
     //QuerySnapshot is a container for documents[Collection] (it contains it)
     QuerySnapshot snapshot = await _firestore.collection(collectionName).get();
@@ -65,8 +65,10 @@ UserRepository userRepository = UserRepository();
       } );
     }
 
-
-    return availableTeachers;
+    if (byName) {
+      return availableTeachers;
+    }
+    return ids;
 
   }
 

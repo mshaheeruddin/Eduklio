@@ -36,6 +36,20 @@ class Repository {
     return teacherIds;
   }
 
+  //get all teachers id
+  Future getAllClasses() async {
+    //fetching all documents (only) not actual data
+    //QuerySnapshot is a container for documents[Collection] (it contains it)
+    QuerySnapshot snapshot = await _firestore.collection("teacher_classes").get();
+    List<String> teacherIds = [];
+    //get data from snapshot that holds the document
+    //so do doc.data() to get data inside document
+    for(var doc in snapshot.docs) {
+      teacherIds.add(doc.id);
+    }
+    return teacherIds;
+  }
+
   //go to all documents
   //check its teacher's array
   //see if given doc exists

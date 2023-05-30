@@ -54,8 +54,9 @@ UserRepository userRepository = UserRepository();
       "className": className,
       "description": description,
       "timeStamp": getCurrentTime(),
+      "userId": FirebaseAuth.instance.currentUser!.uid
     };
-    await _firestore.collection("teacher_announcements").doc(FirebaseAuth.instance.currentUser!.uid).set(newUserData);
+    await _firestore.collection("teacher_announcements").add(newUserData);
 
   }
 }

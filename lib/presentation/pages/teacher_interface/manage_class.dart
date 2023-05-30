@@ -82,6 +82,7 @@ class _ManageClassState extends State<ManageClass> {
                                   userRepository.deleteSomethingFromCollection("teacher_classes", documentId);
                                   classRepository.deleteArrayValueFromCollection("teachers", documentId, FirebaseAuth.instance.currentUser!.uid);
                                   classRepository.deleteArrayValueFromCollection("users", documentId, FirebaseAuth.instance.currentUser!.uid);
+                                  classRepository.deleteArrayValueFromCollection("students", documentId, FirebaseAuth.instance.currentUser!.uid);
 
                                 },
                                   icon: Icon(Icons.delete),

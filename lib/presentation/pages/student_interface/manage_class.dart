@@ -39,10 +39,11 @@ class ManageClassStudent extends StatefulWidget {
 class _ManageClassStudentState extends State<ManageClassStudent> {
 
   @override
-  Future<void> initState() async {
+  void initState()  {
     // TODO: implement initState
     super.initState();
-    availableClasses = await classRepository.getAllClasses("teacher_classes");
+    _populateTeachersList();
+
   }
 
   String className = "";
@@ -208,14 +209,13 @@ class _ManageClassStudentState extends State<ManageClassStudent> {
 
   String selectedTeacher = "";
   bool _isSelectedTeacher = false;
-  List<String> availableTeachers = ['Shaheer', 'Rafay'];
+  List<String> availableTeachers = [];
   List<String> teacherSelected = [];
 
   //populate available teachers
-  void _populateTeachersList() {
-
-
-
+  Future<void> _populateTeachersList() async {
+    availableClasses = await classRepository.getAllClasses("teacher_classes");
+    availableTeachers = await classRepository.getAllTeachers("teachers");
   }
 
 
@@ -296,7 +296,7 @@ class _ManageClassStudentState extends State<ManageClassStudent> {
               BlocProvider.of<EnrollBloc>(context).add(EnrollButtonPressedEvent(true, selectedSubject, selectedTeacher));
               teacherSubjectMap[selectedTeacher] = selectedSubject;
 
-              if(userRepository.getFieldFromDocument(FirebaseAuth.instance.currentUser!.uid, "teachers") != 'teacher') {
+              if(userRepository.getFieldFromDocument("users",FirebaseAuth.instance.currentUser!.uid, "teachers") != 'teacher') {
                 userRepository.addFieldToDocument("users",FirebaseAuth.instance.currentUser!.uid, "teachers", [selectedTeacher]);
               }
 

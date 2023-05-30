@@ -42,7 +42,7 @@ class SignInUseCase  {
             .signInWithEmailAndPassword(email: email,
             password: password);
 
-        String text = await userRepository.getFieldFromDocument(FirebaseAuth.instance.currentUser!.uid, "userType");
+        String text = await userRepository.getFieldFromDocument("users",FirebaseAuth.instance.currentUser!.uid, "userType");
         if (userCredential.user != null) {
           Navigator.popUntil(context, (route) => route.isFirst);
           Navigator.pushReplacement(context,
@@ -149,7 +149,7 @@ class SignInUseCase  {
         CupertinoPageRoute(builder: (context) => SignInAs()),
       );
     } else {
-      String text = await userRepository.getFieldFromDocument(FirebaseAuth.instance.currentUser!.uid, "userType");
+      String text = await userRepository.getFieldFromDocument("users",FirebaseAuth.instance.currentUser!.uid, "userType");
       Navigator.popUntil(context, (route) => route.isFirst);
       Navigator.pushReplacement(
         context,

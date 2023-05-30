@@ -34,10 +34,39 @@ UserRepository userRepository = UserRepository();
     }
 
     for(var classid in classesIds) {
-      availableClasses.add(userRepository.getFieldFromDocument(classid, "className") as String);
+      Future<dynamic> idgotten = userRepository.getFieldFromDocument("teacher_classes",classid, "className");
+      idgotten.then((result) {
+        availableClasses.add(result!);
+      } );
     }
 
     return availableClasses;
+
+  }
+
+
+  //get all teachers data
+  Future<List<String>> getAllTeachers(String collectionName) async {
+    //fetching all documents (only) not actual data
+    //QuerySnapshot is a container for documents[Collection] (it contains it)
+    QuerySnapshot snapshot = await _firestore.collection(collectionName).get();
+    List<String> ids = [];
+    List<String> availableTeachers = [];
+    //get data from snapshot that holds the document
+    //so do doc.data() to get data inside document
+    for(var doc in snapshot.docs) {
+      ids.add(doc.id);
+    }
+
+    for(var id in ids) {
+      Future<dynamic> idgotten = userRepository.getFieldFromDocument("users",id, "name");
+      idgotten.then((result) {
+        availableTeachers.add(userRepository.firstNameFormatter(result)!);
+      } );
+    }
+
+
+    return availableTeachers;
 
   }
 

@@ -26,9 +26,9 @@ class UserRepository {
 
   //methods
 
-  Future<dynamic> getFieldFromDocument(String documentId, String fieldName) async {
+  Future getFieldFromDocument(String collectionName, String documentId, String fieldName) async {
     final documentSnapshot =
-    await FirebaseFirestore.instance.collection('users').doc(documentId).get();
+    await FirebaseFirestore.instance.collection(collectionName).doc(documentId).get();
 
     if (documentSnapshot.exists) {
       final data = documentSnapshot.data();

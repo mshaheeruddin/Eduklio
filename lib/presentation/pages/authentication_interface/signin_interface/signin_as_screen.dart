@@ -78,7 +78,7 @@ class _SignInAsState extends State<SignInAs> {
               String? userId = userRepository.getUserUID();
               userRepository.addFieldToDocument("users",userId!,"userType", "student");
               userRepository.addFieldToDocument("users",userId!,"teachers", []);
-              userRepository.addFieldToDocument("users",userId!,"classes", []);
+              userRepository.addFieldToDocument("users",userId!,"enrolledClasses", []);
               userRepository.addStudentUser(FirebaseAuth.instance.currentUser!.displayName!,FirebaseAuth.instance.currentUser!.email!, FirebaseAuth.instance.currentUser!.uid, "Google");
               Navigator.push(context, MaterialPageRoute(builder: (context) => StudentHomeScreen()));
             },

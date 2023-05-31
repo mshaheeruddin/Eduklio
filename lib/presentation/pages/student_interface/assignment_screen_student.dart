@@ -16,24 +16,24 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class AssignmentScreen extends StatefulWidget {
+class AssignmentScreenStudent extends StatefulWidget {
 
   String className = "";
 
-  AssignmentScreen(this.className);
+  AssignmentScreenStudent(this.className);
 
   @override
-  State<AssignmentScreen> createState() => _AssignmentScreenState();
+  State<AssignmentScreenStudent> createState() => _AssignmentScreenStudentState();
 
 
 }
 
-class _AssignmentScreenState extends State<AssignmentScreen> {
+class _AssignmentScreenStudentState extends State<AssignmentScreenStudent> {
 
   PlatformFile? pickedFile;
   String? dueOn;
 
-  _AssignmentScreenState();
+  _AssignmentScreenStudentState();
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   //reposoitory Instances
@@ -67,7 +67,7 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
           Padding(
             padding: const EdgeInsets.only(top: 20.0, left: 14),
             child: Text(
-              "Manage Assignments",
+              "Upload Assignments",
               style: GoogleFonts.adventPro(fontSize: 30),
             ),
           ),
@@ -153,7 +153,7 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
     return StreamBuilder<QuerySnapshot>(
       //subscribed to firestore collection called users
       //so whenever doc is added/changed, we get 'notification'
-      stream: _firestore.collection("teacher_assignments").snapshots(),
+      stream: _firestore.collection("student_assignments").snapshots(),
       //snapshot is real time data we will get
       builder: (context, snapshot) {
         //if connection (With firestore) is established then.....
@@ -210,7 +210,7 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                         ),
                                         Padding(
                                           padding:  EdgeInsets.only(
-                                              left: MediaQuery.of(context).size.width*0.1, bottom: 15),
+                                              left: MediaQuery.of(context).size.width*0.55, bottom: 15),
                                           child: IconButton(onPressed: () {
                                             //delete with specific document function comes
                                             userRepository.deleteSomethingFromCollection(

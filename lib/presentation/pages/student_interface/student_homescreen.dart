@@ -1,5 +1,6 @@
 import 'package:eduklio/domain/usecases/manage_student_class_usecase.dart';
 import 'package:eduklio/presentation/pages/student_interface/bloc/enroll_bloc/enroll_bloc.dart';
+import 'package:eduklio/presentation/pages/student_interface/bloc/movement_bloc/movement_bloc.dart';
 import 'package:eduklio/presentation/pages/student_interface/manage_class.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -184,8 +185,15 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                   child: InkWell(
                     onTap: () {
                       // Navigate to the attendance screen
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => BlocProvider(
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => MultiBlocProvider(
+  providers: [
+    BlocProvider(
   create: (context) => EnrollBloc(),
+),
+    BlocProvider(
+      create: (context) => MovementBloc(),
+    ),
+  ],
   child: ManageClassStudent(),
 )));
                     },

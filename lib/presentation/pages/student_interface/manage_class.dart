@@ -6,6 +6,8 @@ import 'package:eduklio/data/repositories/user_repository.dart';
 import 'package:eduklio/domain/usecases/manage_student_class_usecase.dart';
 import 'package:eduklio/presentation/dialogs/class_dialogue_enroll.dart';
 import 'package:eduklio/presentation/pages/student_interface/bloc/enroll_bloc/enroll_bloc.dart';
+import 'package:eduklio/presentation/pages/student_interface/bloc/movement_bloc/movement_bloc.dart';
+import 'package:eduklio/presentation/pages/student_interface/widgets/RealTimeDisplayOfTiles.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/bottombar.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/subject_home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -32,12 +34,16 @@ class ManageClassStudent extends StatefulWidget {
 }
 
 class _ManageClassStudentState extends State<ManageClassStudent> {
+  double _position = 0.0;
+
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _populateTeachersListByName();
     _populateTeachersListByIds();
+    log(_position.toString());
   }
 
   String className = "";
@@ -47,163 +53,154 @@ class _ManageClassStudentState extends State<ManageClassStudent> {
   UserRepository userRepository = UserRepository();
   ClassRepository classRepository = ClassRepository();
   Repository repository = Repository();
+  RealTimeDisplayOfTiles realTimeTiles = RealTimeDisplayOfTiles();
   Widget build(BuildContext context) {
-    //streambuilder to get
-    Widget realTimeDisplayOfAdding(BuildContext context) {
-      return StreamBuilder<QuerySnapshot>(
-        //subscribed to firestore collection called users
-        //so whenever doc is added/changed, we get 'notification'
-        stream: _firestore.collection("teacher_classes").snapshots(),
-        //snapshot is real time data we will get
-        builder: (context, snapshot) {
-          //if connection (With firestore) is established then.....
-          if (snapshot.connectionState == ConnectionState.active) {
-            if (snapshot.hasData && snapshot.data != null) {
-              return Expanded(
-                child: ListView.builder(
-                  //length as much as doc we have
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (context, index) {
-                    //from docs array we are now selecting a doc
-                    Map<String, dynamic> userMap = snapshot.data!.docs[index]
-                        .data() as Map<String, dynamic>;
-                    //get users document id
-                    String documentId = snapshot.data!.docs[index].id;
+  
+  
+  
 
-                    if (userRepository.getUserUID() == userMap["userId"]) {
-                      return Card(
-                        elevation: 10,
-                        shadowColor: Colors.black,
-                        child: Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Column(
-                            children: [
-                              ListTile(
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              BottomBar(userMap["className"])));
-                                },
-                                title: Text(userMap["className"],
-                                    style: TextStyle(fontSize: 22)),
-                                subtitle: Text(userMap["classCode"],
-                                    style: TextStyle(fontSize: 15)),
-                                trailing: IconButton(
-                                  onPressed: () {
-                                    //delete with specific document function comes
-                                    userRepository
-                                        .deleteSomethingFromCollection(
-                                            "teacher_classes", documentId);
-                                  },
-                                  icon: Icon(Icons.delete),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        /* title: Text(currentClass.className),
-                    subtitle: Text(currentClass.classCode),*/
-                      );
-                    }
-                  },
-                ),
-              );
-            } else {
-              return Text("No Data");
-            }
-          } else {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
-      );
-    }
 
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Stack(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 30),
+                    child: IconButton(
+                        onPressed: () {}, icon: FaIcon(FontAwesomeIcons.arrowLeft)),
+                  )
+                ],
+              ),
               Padding(
-                padding: EdgeInsets.only(top: 30),
-                child: IconButton(
-                    onPressed: () {}, icon: FaIcon(FontAwesomeIcons.arrowLeft)),
-              )
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 20.0, left: 14),
-            child: Text(
-              'Manage your classes',
-              style: GoogleFonts.adventPro(fontSize: 30),
-            ),
-          ),
-          SizedBox(
-            height: 30,
-          ),
-          _buildAddTask(),
-          realTimeDisplayOfAdding(context),
-        ],
-      ),
-      /*floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return ClassDialogEnroll(classManager: widget.classManager);
-
-            },
-          );
-        },
-        child: Icon(Icons.add),
-      ),*/
-    );
-  }
-
-  Widget _buildAddTask() {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.2,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: DottedBorder(
-          borderType: BorderType.RRect,
-          radius: Radius.circular(20),
-          dashPattern: [10, 10],
-          color: Colors.grey,
-          strokeWidth: 2,
-          child: BlocBuilder<EnrollBloc, EnrollState>(
-            builder: (context, state) {
-              return GestureDetector(
-                onTap: () {
-                  BlocProvider.of<EnrollBloc>(context)
-                      .add(EnrollClickedEvent(true));
-                  var map1 = _populateListsToMap(
-                      availableTeachers, availableTeachersIds);
-                  var map2 = _populateListsToMap(
-                      availableClasses, availableClassesIds);
-                  mapOfIdsToIds = _populateMapOfIdsToIds(map1, map2)!;
-                  if (state is EnrollDialogueBoxLaunchState) {
-                    _showAlertBox();
-                  }
-                },
-                child: Center(
-                  child: Text(
-                    '+ Enroll in class',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
+                padding: const EdgeInsets.only(top: 20.0, left: 14),
+                child: Text(
+                  'Manage your classes',
+                  style: GoogleFonts.adventPro(fontSize: 30),
                 ),
-              );
-            },
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              SizedBox(child: realTimeTiles.realTimeDisplayOfAdding(context)),
+              SizedBox(
+                height: 30,
+              ),
+            SizedBox(child: _buildAddTask()),
+
+            ],
           ),
         ),
       ),
     );
   }
+
+  Widget _buildAddTask() {
+      return SizedBox(
+        height: MediaQuery.of(context).size.height,
+        child: BlocBuilder<MovementBloc, MovementState>(
+  builder: (context, state) {
+    return Stack(
+          children: [AnimatedPositioned(
+            duration: Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            left: 0.0,
+            right: 0.0,
+            top: _position,
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.2,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: GestureDetector(
+                  onTap: () {
+                    _populateTeachersListByName();
+                    _populateTeachersListByIds();
+                    /*BlocProvider.of<MovementBloc>(context).add(
+                        ClickedOnEnrollEvent(
+                            true, _position));*/
+                    if(state is GoDownState) _position = state.position;
+                    log(availableClassesIds.toString() + "Class ids");
+                    log(availableTeachersIds.toString() + "Class ids");
+                    BlocProvider.of<EnrollBloc>(context)
+                        .add(EnrollClickedEvent(true));
+                    teacherNameToTeacherIdMap = _populateListsToMap(
+                        availableTeachers, availableTeachersIds);
+                    classNameToClassIdMap = _populateListsToMap(
+                        availableClasses, availableClassesIds);
+                    var s = _populateMapOfIdsToIds(teacherNameToTeacherIdMap, classNameToClassIdMap);
+                    if(s != null) {
+                      mapOfIdsToIds = s;
+                    }
+                    if (state is EnrollDialogueBoxLaunchState) {
+                      _showAlertBox();
+                    }
+                  },
+                  child: DottedBorder(
+                    borderType: BorderType.RRect,
+                    radius: Radius.circular(20),
+                    dashPattern: [10, 10],
+                    color: Colors.grey,
+                    strokeWidth: 2,
+                    child: BlocBuilder<EnrollBloc, EnrollState>(
+                      builder: (context, state) {
+                        return GestureDetector(
+                          onTap: () {
+                            _populateTeachersListByName();
+                            _populateTeachersListByIds();
+                            BlocProvider.of<EnrollBloc>(context)
+                                .add(EnrollClickedEvent(true));
+                             teacherNameToTeacherIdMap = _populateListsToMap(
+                                availableTeachers, availableTeachersIds);
+                             classNameToClassIdMap = _populateListsToMap(
+                                availableClasses, availableClassesIds);
+                            var s = _populateMapOfIdsToIds(teacherNameToTeacherIdMap, classNameToClassIdMap);
+                            if(s != null) {
+                              mapOfIdsToIds = s;
+                            }
+                            if (state is EnrollDialogueBoxLaunchState) {
+                              _showAlertBox();
+                            }
+                          },
+                          child: Center(
+                            child: Text(
+                              '+ Enroll in class',
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            )
+
+          ),]
+        );
+  },
+),
+      );
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  //ALERT BOX CODE
+  
+  
+  
+  
+  
 
   String selectedSubject = "";
   bool _selected = false;
@@ -211,13 +208,14 @@ class _ManageClassStudentState extends State<ManageClassStudent> {
   List<String> availableClassesIds = [];
   List<String> enrolledClasses = [];
   Map<String, String> mapOfIdsToIds = {};
+  Map<String, String> teacherNameToTeacherIdMap = {};
 
   String selectedTeacher = "";
   bool _isSelectedTeacher = false;
   List<String> availableTeachers = [];
   List<String> availableTeachersIds = [];
   List<String> teacherSelected = [];
-
+  Map<String, String> classNameToClassIdMap = {};
   //populate available teachers
   Future<void> _populateTeachersListByName() async {
     availableClasses =
@@ -302,21 +300,52 @@ class _ManageClassStudentState extends State<ManageClassStudent> {
                   return TextButton(
                       child: Text('Enroll'),
                       onPressed: () {
+                        BlocProvider.of<MovementBloc>(context).add(
+                            ClickedOnEnrollEvent(
+                                true, _position));
+                         log('emitted');
                         BlocProvider.of<EnrollBloc>(context).add(
                             EnrollButtonPressedEvent(
                                 true, selectedSubject, selectedTeacher));
-                        teacherSubjectMap[selectedTeacher] = selectedSubject;
+                        //ADD TO USERS(students)
                         userRepository.addToArray(
                             FirebaseAuth.instance.currentUser!.uid,
                             "users",
                             "enrolledClasses",
-                            selectedSubject);
+                            _getSelectedOptionIds(selectedSubject, false) != null ? _getSelectedOptionIds(selectedSubject, false)! : "");
                         userRepository.addToArray(
                             FirebaseAuth.instance.currentUser!.uid,
                             "students",
                             "enrolledClasses",
-                            selectedSubject);
-                        //userRepository.addToArray(repository.g, "teacher_classes", "studentsEnrolled", FirebaseAuth.instance.currentUser!.uid);
+                            _getSelectedOptionIds(selectedSubject, false) != null ?_getSelectedOptionIds(selectedSubject, false)! : "" );
+                        userRepository.addToArray(
+                            FirebaseAuth.instance.currentUser!.uid,
+                            "students",
+                            "teachers",
+                            _getSelectedOptionIds(selectedTeacher, true) != null ? _getSelectedOptionIds(selectedTeacher, true)! : "" );
+                        userRepository.addToArray(
+                            FirebaseAuth.instance.currentUser!.uid,
+                            "users",
+                            "teachers",
+                            _getSelectedOptionIds(selectedTeacher, true) != null ? _getSelectedOptionIds(selectedTeacher, true)!:"");
+                        //add to users (teachers)
+                        userRepository.addToArray(
+                            _getSelectedOptionIds(selectedTeacher, true) != null? _getSelectedOptionIds(selectedTeacher, true)!:"",
+                            "users",
+                            "students",
+                            FirebaseAuth.instance.currentUser!.uid);
+                        userRepository.addToArray(
+                            _getSelectedOptionIds(selectedTeacher, true)!= null ? _getSelectedOptionIds(selectedTeacher, true)! : "",
+                            "teachers",
+                            "students",
+                            FirebaseAuth.instance.currentUser!.uid);
+                         //add to classes collection
+                        userRepository.addToArray(
+                            _getSelectedOptionIds(selectedSubject, false) != null ? _getSelectedOptionIds(selectedSubject, false)! : "",
+                            "teacher_classes",
+                            "studentsEnrolled",
+                            FirebaseAuth.instance.currentUser!.uid);
+                        log(selectedSubject.toString());
                         Navigator.of(context).pop();
                       });
                 },
@@ -334,9 +363,12 @@ class _ManageClassStudentState extends State<ManageClassStudent> {
       List<String> list1, List<String> list2) {
     Map<String, String> idToNameMap = {};
 
-    for (var item in list1) {
+
+
+   for (var item in list1) {
       for (var item2 in list2) {
         idToNameMap[item] = item2;
+        list2.remove(item2);
         break;
       }
     }
@@ -360,4 +392,19 @@ class _ManageClassStudentState extends State<ManageClassStudent> {
       return idToNameMap;
     }
   }
+
+
+
+  String? _getSelectedOptionIds(String? option, bool isTeacher) {
+    if (isTeacher) {
+        return teacherNameToTeacherIdMap[option];
+    }
+    else {
+      return classNameToClassIdMap[option];
+    }
+  }
+
+
+
+
 }

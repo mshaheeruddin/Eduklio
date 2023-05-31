@@ -118,7 +118,7 @@ class UserRepository {
       "name": name,
       "email": email,
       "teachers": [],
-      "classes": [],
+      "enrolledClasses": [],
       "userId": userId,
 
     };
@@ -173,6 +173,8 @@ class UserRepository {
 
     return null; // User UID not available
   }
+
+
 
   String? getUserName() {
     final User? user = FirebaseAuth.instance.currentUser;
@@ -236,6 +238,8 @@ class UserRepository {
   Future<void> deleteSomethingFromCollection(String collectionName, String id) async {
     await _firestore.collection(collectionName).doc(id).delete();
   }
+
+
 
   //only first name
   String? firstNameFormatter(String name) {

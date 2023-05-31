@@ -1,14 +1,11 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:eduklio/data/repositories/assignment_repository.dart';
+import 'package:eduklio/data/repositories/class_repository.dart';
 import 'package:eduklio/data/repositories/general_repository.dart';
-import 'package:eduklio/data/repositories/storage_repository.dart';
 import 'package:eduklio/data/repositories/user_repository.dart';
 import 'package:eduklio/domain/usecases/manageclass_usecase.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/bloc/bottombar_homescreen_bloc/text_field_announce_bloc.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/manage_class.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,39 +13,50 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class AssignmentScreen extends StatefulWidget {
+class BottomHomeScreen extends StatefulWidget {
 
   String className = "";
 
-  AssignmentScreen(this.className);
+  BottomHomeScreen(this.className);
+
+
+
 
   @override
-  State<AssignmentScreen> createState() => _AssignmentScreenState();
+  State<BottomHomeScreen> createState() => _BottomHomeScreenState();
+
+
 
 
 }
 
-class _AssignmentScreenState extends State<AssignmentScreen> {
+class _BottomHomeScreenState extends State<BottomHomeScreen> {
 
-  PlatformFile? pickedFile;
-  String? dueOn;
 
-  _AssignmentScreenState();
+
+  _BottomHomeScreenState();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+  }
+
+
+
+
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  //reposoitory Instances
   UserRepository userRepository = UserRepository();
-  StorageRepository storageRepository = StorageRepository();
-  AssignmentRepository assignmentRepository = AssignmentRepository();
-
-
+  ClassRepository classRepository = ClassRepository();
 
   TextEditingController announceToClass = TextEditingController();
   String userId = "";
-
-
   @override
   Widget build(BuildContext context) {
+
+
 
     return Scaffold(
 
@@ -67,17 +75,15 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
           Padding(
             padding: const EdgeInsets.only(top: 20.0, left: 14),
             child: Text(
-              "Manage Assignments",
+              widget.className,
               style: GoogleFonts.adventPro(fontSize: 30),
             ),
           ),
           SizedBox(height: 30,),
           _announceTextBox(),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-
-              _scheduleClassButton(),
 
               Container(
                   alignment: Alignment.topRight,
@@ -153,7 +159,7 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
     return StreamBuilder<QuerySnapshot>(
       //subscribed to firestore collection called users
       //so whenever doc is added/changed, we get 'notification'
-      stream: _firestore.collection("teacher_assignments").snapshots(),
+      stream: _firestore.collection("teacher_announcements").snapshots(),
       //snapshot is real time data we will get
       builder: (context, snapshot) {
         //if connection (With firestore) is established then.....
@@ -182,7 +188,8 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                               Stack(
                                 children: [
                                   Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      mainAxisAlignment: MainAxisAlignment
+                                          .start,
                                       children: [
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
@@ -205,16 +212,16 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                         Padding(
                                           padding: const EdgeInsets.only(
                                               bottom: 12),
-                                          child: Text(userRepository.getUserName() != null ? userRepository.getUserName()! : "User",
+                                          child: Text('',
                                               style: TextStyle(fontSize: 18)),
                                         ),
                                         Padding(
-                                          padding:  EdgeInsets.only(
-                                              left: MediaQuery.of(context).size.width*0.1, bottom: 15),
+                                          padding: const EdgeInsets.only(
+                                              left: 45, bottom: 15),
                                           child: IconButton(onPressed: () {
                                             //delete with specific document function comes
                                             userRepository.deleteSomethingFromCollection(
-                                                "teacher_assignments",
+                                                "teacher_announcements",
                                                 documentId);
                                           },
                                             icon: Icon(Icons.delete),),
@@ -225,21 +232,12 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
                                   SizedBox(height: 10,),
                                 ],
                               ),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 12),
-                                    child: Text('Posted an assignment: ${userMap["assignmentFileName"]} due on: ${userMap["dueDate"]}',
-                                        style: TextStyle(fontSize: 15)),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 12),
-                                    child: Text('Additional Instructions: ${userMap["description"]}',
-                                        style: TextStyle(fontSize: 15)),
-                                  ),
-                                ],
+                              Padding(
+                                padding: EdgeInsets.only(left: 12),
+                                child: Text(userMap["description"] == null
+                                    ? ""
+                                    : userMap["description"],
+                                    style: TextStyle(fontSize: 15)),
                               ),
                             ],
                           ),
@@ -275,58 +273,14 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
     ).then((value) {
       setState(() {
         _dateTime = value!;
-        dueOn = _dateTime.day.toString() + " " +
+        /*dateController.text = _dateTime.day.toString() + " " +
             _monthFormatter(_dateTime.month) + " " +
-            _dateTime.year.toString();
+            _dateTime.year.toString();*/
       });
     });
   }
 
 
-
-  //selectFile
-
-  Future selectFile() async {
-    final result = await FilePicker.platform.pickFiles();
-    if (result == null) return;
-
-    setState(() {
-      pickedFile = result.files.first;
-    });
-  }
-  String shortenFileName(String fileName, int maxLength) {
-    if (fileName.length <= maxLength) {
-      return fileName;
-    } else {
-      String nameWithoutExtension = fileName.substring(0, fileName.lastIndexOf('.'));
-      String extension = fileName.substring(fileName.lastIndexOf('.'));
-
-      String shortenedName = nameWithoutExtension.substring(0, maxLength - extension.length - 3) + '...' + extension;
-      return shortenedName;
-    }
-  }
-
-  //schedule a class
-  Widget _scheduleClassButton() {
-    return Row(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 14),
-          child: IconButton(onPressed: (){
-            _showDatePicker();
-          }, icon: FaIcon(FontAwesomeIcons.calendar)),
-        ),
-        SizedBox(width: 1,),
-        Column(
-          children: [
-            ElevatedButton(onPressed: selectFile, child: Text('Select File')),
-
-            if (pickedFile != null) Text(shortenFileName(pickedFile!.name, 20), maxLines: 2, overflow: TextOverflow.fade,)
-          ],
-        )
-      ],
-    );
-  }
 
 
 
@@ -336,10 +290,8 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
       builder: (context, state) {
         return ElevatedButton(
           onPressed: (state is TextFieldEmptyState) ? null : () {
-            storageRepository.uploadFile(pickedFile!);
-            assignmentRepository.addAssignmentAnnouncement(
-                widget.className, announceToClass.text,storageRepository.downloadURL,pickedFile,dueOn,userRepository.getUserUID());
-
+            classRepository.addAnnouncement(
+                widget.className, announceToClass.text, userRepository.getUserUID());
           }
           , child: Text('Share'), style: ButtonStyle(backgroundColor: state is TextFieldEmptyState ?  MaterialStateProperty.all(Colors.grey) :  MaterialStateProperty.all(Colors.black),
             fixedSize: MaterialStateProperty.all(Size(MediaQuery.of(context).size.width * 0.25 , 40)),
@@ -364,7 +316,7 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
             controller: announceToClass,
 
             decoration:  InputDecoration(
-              labelText: state is TextFieldEmptyState ? 'Enter something' : 'Announce to class',
+              labelText: 'Discuss Something with class',
               labelStyle: TextStyle(),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(50)),

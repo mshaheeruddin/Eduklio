@@ -299,7 +299,7 @@ class _ManageClassStudentState extends State<ManageClassStudent> {
                 builder: (context, state) {
                   return TextButton(
                       child: Text('Enroll'),
-                      onPressed: () {
+                      onPressed: () async {
                         BlocProvider.of<MovementBloc>(context).add(
                             ClickedOnEnrollEvent(
                                 true, _position));
@@ -345,7 +345,17 @@ class _ManageClassStudentState extends State<ManageClassStudent> {
                             "teacher_classes",
                             "studentsEnrolled",
                             FirebaseAuth.instance.currentUser!.uid);
-                        log(selectedSubject.toString());
+                        userRepository.addToMap(
+                            _getSelectedOptionIds(selectedSubject, false) != null ? _getSelectedOptionIds(selectedSubject, false)! : "",
+                            "teacher_classes",
+                            "studentsNameToIdMap",
+                            FirebaseAuth.instance.currentUser!.displayName != null ? FirebaseAuth.instance.currentUser!.displayName! : await userRepository.getFieldFromDocument("users", FirebaseAuth.instance.currentUser!.uid, "name"),
+                            FirebaseAuth.instance.currentUser!.uid);
+                        userRepository.addToArray(
+                            _getSelectedOptionIds(selectedSubject, false) != null ? _getSelectedOptionIds(selectedSubject, false)! : "",
+                            "teacher_classes",
+                            "studentsEnrolledNames",
+                            await userRepository.getFieldFromDocument("users", FirebaseAuth.instance.currentUser!.uid, "name"));
                         Navigator.of(context).pop();
                       });
                 },

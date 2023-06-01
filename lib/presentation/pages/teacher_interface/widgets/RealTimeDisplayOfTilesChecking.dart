@@ -12,7 +12,7 @@ import '../../student_interface/bottombar.dart';
 import '../../teacher_interface/bottombar.dart';
 import '../bottombar.dart';
 
-class TilesForTeacherAttendance {
+class RealTimeDisplayOfTilesChecking {
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   UserRepository userRepository = UserRepository();
@@ -109,5 +109,13 @@ class TilesForTeacherAttendance {
 
     return cards;
   }
+
+
+
+
+
+
+
+
 
 }

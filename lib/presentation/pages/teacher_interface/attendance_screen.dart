@@ -1,4 +1,6 @@
 import 'package:eduklio/presentation/pages/student_interface/widgets/attendance_tiles_display.dart';
+import 'package:eduklio/presentation/pages/teacher_interface/widgets/RealTimeDisplayOfTilesChecking.dart';
+import 'package:eduklio/presentation/pages/teacher_interface/widgets/attendance_tiles_display.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -13,7 +15,7 @@ class AttendanceScreen extends StatefulWidget {
 
 class _AttendanceScreenState extends State<AttendanceScreen> {
 
-  StudentsEnrolledTiles studentsEnrolledTiles = StudentsEnrolledTiles();
+  TilesForTeacherAttendance tilesForTeacherAttendance = TilesForTeacherAttendance();
 
 
   @override
@@ -40,7 +42,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
             ),
           ),
           SizedBox(height: 30,),
-          SizedBox(child: studentsEnrolledTiles.realTimeDisplayOfAdding(context)),
+          //SizedBox(child: tilesForTeacherAttendance.realTimeDisplayOfAdding(context)),
+          SizedBox(child: tilesForTeacherAttendance.realTimeDisplayOfAdding(context)),
 
         ],
       ),

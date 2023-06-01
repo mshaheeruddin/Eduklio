@@ -80,6 +80,8 @@ UserRepository userRepository = UserRepository();
       "classCode": classCode,
       "userId": FirebaseAuth.instance.currentUser!.uid,
       "studentsEnrolled": [],
+      "studentsEnrolledNames":[],
+      "studentsNameToIdMap": {},
       "createdAt": getCurrentTime()
     };
     DocumentReference documentReference = await _firestore.collection("teacher_classes").add(newUserData);

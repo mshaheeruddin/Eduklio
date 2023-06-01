@@ -22,7 +22,7 @@ class StudentsEnrolledTiles {
     return StreamBuilder<QuerySnapshot>(
       //subscribed to firestore collection called users
       //so whenever doc is added/changed, we get 'notification'
-      stream: _firestore.collection("students").snapshots(),
+      stream: _firestore.collection("teacher_classes").snapshots(),
       //snapshot is real time data we will get
       builder: (context, snapshot) {
         //if connection (With firestore) is established then.....

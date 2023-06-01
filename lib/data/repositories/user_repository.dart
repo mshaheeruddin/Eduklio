@@ -49,6 +49,17 @@ class UserRepository {
   }
 
 
+  Future<void> addToMap(String documentId, String collectionName, String mapFieldName, String key, dynamic value) async {
+    final documentRef = FirebaseFirestore.instance.collection(collectionName).doc(documentId);
+
+    await documentRef.update({
+      '$mapFieldName.$key': value,
+    });
+  }
+
+
+
+
   Future<void> removeFromArray(String userId, String collectionName, String fieldName, String valueToRemove) async {
     final userRef = FirebaseFirestore.instance.collection(collectionName).doc(userId);
 

@@ -7,7 +7,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AttendanceScreen extends StatefulWidget {
-  const AttendanceScreen({Key? key}) : super(key: key);
+  String className = "";
+
+  AttendanceScreen(this.className);
 
   @override
   State<AttendanceScreen> createState() => _AttendanceScreenState();
@@ -43,7 +45,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
           ),
           SizedBox(height: 30,),
           //SizedBox(child: tilesForTeacherAttendance.realTimeDisplayOfAdding(context)),
-          SizedBox(child: tilesForTeacherAttendance.realTimeDisplayOfAdding(context)),
+          SizedBox(child: tilesForTeacherAttendance.realTimeDisplayOfAdding(context, widget.className)),
 
         ],
       ),

@@ -1,9 +1,12 @@
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eduklio/presentation/dialogs/bloc/add_attendance_bloc/add_attendance_bloc.dart';
+import 'package:eduklio/presentation/pages/teacher_interface/update_attendance.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../data/repositories/class_repository.dart';
 import '../../../../data/repositories/general_repository.dart';
@@ -20,8 +23,7 @@ class TilesForTeacherAttendance {
   Repository repository = Repository();
 
 
-
-  Widget realTimeDisplayOfAdding(BuildContext context) {
+  Widget realTimeDisplayOfAdding(BuildContext context, String className) {
     return StreamBuilder<QuerySnapshot>(
       stream: _firestore.collection("teacher_classes").snapshots(),
       builder: (context, snapshot) {
@@ -33,7 +35,8 @@ class TilesForTeacherAttendance {
                 itemCount: snapshot.data!.docs.length,
                 itemBuilder: (context, index) {
                   return FutureBuilder<List<Card>>(
-                    future: _buildCardsAsync(snapshot.data!.docs[index], context),
+                    future: _buildCardsAsync(
+                        snapshot.data!.docs[index], context, className),
                     builder: (context, cardSnapshot) {
                       if (cardSnapshot.hasData && cardSnapshot.data != null) {
                         return Column(
@@ -57,56 +60,54 @@ class TilesForTeacherAttendance {
     );
   }
 
-  Future<List<Card>> _buildCardsAsync(DocumentSnapshot document, BuildContext context) async {
+  Future<List<Card>> _buildCardsAsync(DocumentSnapshot document,
+      BuildContext context, String className) async {
     Map<String, dynamic> userMap = document.data() as Map<String, dynamic>;
     String documentId = document.id;
 
-    List<String> studentsEnrolledNames = List<String>.from(userMap["studentsEnrolledNames"]);
+    List<String> studentsEnrolledNames = List<String>.from(
+        userMap["studentsEnrolledNames"]);
     String? name = await userRepository.getUserFirstName();
     String nameNonNull = name ?? "";
 
     List<Card> cards = [];
-    for (String studentName in studentsEnrolledNames) {
-      cards.add(
-        Card(
-          elevation: 10,
-          shadowColor: Colors.black,
-          child: Padding(
-            padding: EdgeInsets.all(10),
-            child: ListTile(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BottomBarStudent(userMap["className"]),
+    if (userMap["className"] == className) {
+      for (String studentName in studentsEnrolledNames) {
+        cards.add(
+          Card(
+            elevation: 10,
+            shadowColor: Colors.black,
+            child: Padding(
+              padding: EdgeInsets.all(10),
+              child: BlocProvider(
+                create: (context) => AddAttendanceBloc(),
+                child: ListTile(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            UpdateAttendance(studentName),
+                      ),
+                    );
+                  },
+                  title: Text(studentName, style: TextStyle(fontSize: 22)),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('class enrolled: ' + userMap["className"],
+                          style: TextStyle(fontSize: 15)),
+                      Text("teacher: " + nameNonNull),
+                    ],
                   ),
-                );
-              },
-              title: Text(studentName, style: TextStyle(fontSize: 22)),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('class enrolled: ' + userMap["className"], style: TextStyle(fontSize: 15)),
-                  Text("teacher: " + nameNonNull),
-                ],
-              ),
-              trailing: IconButton(
-                onPressed: () {
-                  userRepository.removeFromArray(
-                    documentId,
-                    "teacher_classes",
-                    "studentsEnrolled",
-                    FirebaseAuth.instance.currentUser!.uid,
-                  );
-                },
-                icon: Icon(Icons.delete),
+
+                ),
               ),
             ),
           ),
-        ),
-      );
+        );
+      }
     }
-
     return cards;
   }
 

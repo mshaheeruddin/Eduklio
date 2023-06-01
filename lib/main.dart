@@ -1,4 +1,5 @@
 
+import 'package:eduklio/presentation/dialogs/bloc/add_attendance_bloc/add_attendance_bloc.dart';
 import 'package:eduklio/presentation/pages/animated.dart';
 import 'package:eduklio/presentation/pages/student_interface/bloc/enroll_bloc/enroll_bloc.dart';
 import 'package:eduklio/presentation/pages/student_interface/bloc/movement_bloc/movement_bloc.dart';
@@ -41,6 +42,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<MovementBloc> (
           create: (context) => MovementBloc(),
+        ),
+        BlocProvider<AddAttendanceBloc> (
+          create: (context) => AddAttendanceBloc(),
         )
       ],
       child: MaterialApp(

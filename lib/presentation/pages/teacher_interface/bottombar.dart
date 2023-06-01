@@ -40,7 +40,7 @@ Widget getSubjectWidget() {
   child: SubjectScreen(widget.className),
 ),
       AssignmentScreen(widget.className),
-      AttendanceScreen(),
+      AttendanceScreen(widget.className),
       const Text("Profile")
     ];
   }

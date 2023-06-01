@@ -29,6 +29,7 @@ class _ClassDialogState extends State<ClassDialog> {
     _classNameController.dispose();
     _classCodeController.dispose();
     super.dispose();
+
   }
 
   @override

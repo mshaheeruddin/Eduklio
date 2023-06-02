@@ -68,6 +68,18 @@ class Repository {
 
   }
 
+  // update field
+
+  Future<void> updateField(String collectionName, String documentId, String fieldName, dynamic fieldValue) async {
+    CollectionReference collectionRef = FirebaseFirestore.instance.collection(collectionName);
+    DocumentReference docRef = collectionRef.doc(documentId);
+    await docRef.update({
+      fieldName: fieldValue,
+    });
+
+  }
+
+
 
 
 

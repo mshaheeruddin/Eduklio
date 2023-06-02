@@ -1,3 +1,4 @@
+import 'package:eduklio/presentation/pages/student_interface/widgets/student_attendance_tiles_display_std.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -11,6 +12,9 @@ class AttendanceStudent extends StatefulWidget {
 }
 
 class _AttendanceStudentState extends State<AttendanceStudent> {
+
+  VerifyAttendanceTiles verifyAttendanceTiles = VerifyAttendanceTiles();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +41,7 @@ class _AttendanceStudentState extends State<AttendanceStudent> {
           ),
           SizedBox(height: 30,),
 
-
+        verifyAttendanceTiles.realTimeDisplayOfAdding(context)
         ],
       ),
     );

@@ -16,6 +16,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../teacher_interface/widgets/bloc/student_attendance_tile_bloc/student_attendance_tiles_bloc.dart';
+
 class BottomBarStudent extends StatefulWidget {
  String className = "";
  BottomBarStudent(this.className);
@@ -43,7 +45,10 @@ Widget getSubjectWidget() {
   child: BottomHomeScreen(widget.className),
 ),
       AssignmentScreenStudent(widget.className),
-      AttendanceStudent(),
+      BlocProvider(
+  create: (context) => StudentAttendanceTilesBloc(),
+  child: AttendanceStudent(),
+),
       const Text("Profile")
     ];
   }

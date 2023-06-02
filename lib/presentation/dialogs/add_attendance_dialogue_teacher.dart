@@ -66,12 +66,6 @@ class _AddAttendanceDialogueState extends State<AddAttendanceDialogue> {
               labelText: 'Duration Of Class',
             ),
           ),
-          TextField(
-            controller: _studentNameController,
-            decoration: InputDecoration(
-              labelText: 'Student Name',
-            ),
-          ),
           SizedBox(height: 20,),
           Stack(
               children: [
@@ -116,9 +110,6 @@ class _AddAttendanceDialogueState extends State<AddAttendanceDialogue> {
                   setState(() {
                     widget.classManager.addClass(newClass);
                   });
-
-
-
                  classRepository.addAttendance(
                       className,widget.studentName,widget.studentId,getUpdatedDate().text);
                   Navigator.pop(context); // Close the dialog

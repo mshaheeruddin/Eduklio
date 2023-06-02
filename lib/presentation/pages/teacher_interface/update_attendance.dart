@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:eduklio/presentation/dialogs/add_attendance_dialogue_teacher.dart';
+import 'package:eduklio/presentation/pages/teacher_interface/widgets/student_attendance_tiles_display.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -27,7 +28,7 @@ class _UpdateAttendanceState extends State<UpdateAttendance> {
     super.initState();
     log(widget.studentId);
   }
-
+UpdatedStudentAttendanceTiles updatedStudentAttendanceTiles = UpdatedStudentAttendanceTiles();
 
 
   final ClassManager classManager = ClassManager();
@@ -64,7 +65,8 @@ class _UpdateAttendanceState extends State<UpdateAttendance> {
               style: GoogleFonts.adventPro(fontSize: 20),
             ),
           ),
-
+          SizedBox(height: 20,),
+          updatedStudentAttendanceTiles.realTimeDisplayOfAdding(context)
 
         ],
       ),

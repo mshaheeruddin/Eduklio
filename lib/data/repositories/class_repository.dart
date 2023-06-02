@@ -92,10 +92,10 @@ UserRepository userRepository = UserRepository();
 
 
 
-  Future<void> addAttendance(String className,String studentName, String studentId, String classDate) async{
+  Future<void> addAttendance(String classDuration,String studentName, String studentId, String classDate) async{
 
     Map<String, dynamic> newUserData = {
-      "className": className,
+      "classDuration": classDuration,
       "studentName": studentName,
       "teacherId": FirebaseAuth.instance.currentUser!.uid,
       "studentId": studentId,

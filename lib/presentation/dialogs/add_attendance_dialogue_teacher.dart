@@ -15,16 +15,17 @@ import 'class_dialog.dart';
 
 class AddAttendanceDialogue extends StatefulWidget {
   final ClassManager classManager;
+  String studentName = "";
+  String studentId = "";
 
-
-  AddAttendanceDialogue({required this.classManager});
+  AddAttendanceDialogue(this.classManager,this.studentName, this.studentId);
 
   @override
   _AddAttendanceDialogueState createState() => _AddAttendanceDialogueState();
 }
 
 class _AddAttendanceDialogueState extends State<AddAttendanceDialogue> {
-  final TextEditingController _classNameController = TextEditingController();
+  final TextEditingController _DurationOfClass = TextEditingController();
   final TextEditingController _studentNameController = TextEditingController();
   late final TextEditingController _dateController= TextEditingController();
 
@@ -35,7 +36,7 @@ class _AddAttendanceDialogueState extends State<AddAttendanceDialogue> {
 
   @override
   void dispose() {
-    _classNameController.dispose();
+    _DurationOfClass.dispose();
     _studentNameController.dispose();
     super.dispose();
   }
@@ -43,7 +44,7 @@ class _AddAttendanceDialogueState extends State<AddAttendanceDialogue> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    BlocProvider.of<AddAttendanceBloc>(context).add(EmptyFieldEvent(_classNameController.text, _studentNameController.text, _dateController.text));
+    BlocProvider.of<AddAttendanceBloc>(context).add(EmptyFieldEvent(_DurationOfClass.text, _studentNameController.text, _dateController.text));
 
   }
 
@@ -60,9 +61,9 @@ class _AddAttendanceDialogueState extends State<AddAttendanceDialogue> {
           TextField(
             onChanged: (_) {
             },
-            controller: _classNameController,
+            controller: _DurationOfClass,
             decoration: InputDecoration(
-              labelText: 'Subject Name',
+              labelText: 'Duration Of Class',
             ),
           ),
           TextField(
@@ -107,16 +108,19 @@ class _AddAttendanceDialogueState extends State<AddAttendanceDialogue> {
             return TextButton(
               onPressed:(state is EmptyTextFieldState) ? null : () {
 
-                String className = _classNameController.text;
-                String classCode = _studentNameController.text;
-                if (className.isNotEmpty && classCode.isNotEmpty) {
+                String className = _DurationOfClass.text;
+                String studentName = _studentNameController.text;
+                if (className.isNotEmpty && studentName.isNotEmpty) {
                   Class newClass = Class(
-                      className: className, classCode: classCode);
+                      className: className, classCode: studentName);
                   setState(() {
                     widget.classManager.addClass(newClass);
                   });
-                  classRepository.addClass(
-                      className, classCode, userRepository.getUserUID());
+
+
+
+                 classRepository.addAttendance(
+                      className,widget.studentName,widget.studentId,getUpdatedDate().text);
                   Navigator.pop(context); // Close the dialog
                 }
               },

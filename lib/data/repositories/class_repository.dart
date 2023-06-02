@@ -90,6 +90,23 @@ UserRepository userRepository = UserRepository();
 
   }
 
+
+
+  Future<void> addAttendance(String className,String studentName, String studentId, String classDate) async{
+
+    Map<String, dynamic> newUserData = {
+      "className": className,
+      "studentName": studentName,
+      "teacherId": FirebaseAuth.instance.currentUser!.uid,
+      "studentId": studentId,
+      "classDate": classDate,
+      "createdAt": getCurrentTime(),
+      "isVerified": false
+    };
+    DocumentReference documentReference = await _firestore.collection("class_attendance").add(newUserData);
+
+  }
+
   void deleteArrayValueFromCollection(String collectionName,String classId, String teacherId) async {
     // Remove the class ID from the teacher's array in the teachers collection
     await FirebaseFirestore.instance.collection(collectionName).doc(teacherId).update({

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:eduklio/presentation/dialogs/add_attendance_dialogue_teacher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,14 +12,23 @@ import '../../dialogs/class_dialog.dart';
 class UpdateAttendance extends StatefulWidget {
   String studentName = "";
   String className = "";
-
-  UpdateAttendance(this.studentName);
+  String studentId = "";
+  UpdateAttendance(this.studentName, this.studentId);
 
   @override
   State<UpdateAttendance> createState() => _UpdateAttendanceState();
 }
 
 class _UpdateAttendanceState extends State<UpdateAttendance> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    log(widget.studentId);
+  }
+
+
 
   final ClassManager classManager = ClassManager();
   DateTime _dateTime = DateTime.now();
@@ -62,7 +73,7 @@ class _UpdateAttendanceState extends State<UpdateAttendance> {
           showDialog(
             context: context,
             builder: (context) {
-              return AddAttendanceDialogue(classManager: classManager);
+              return AddAttendanceDialogue(classManager, widget.studentName,widget.studentId);
 
             },
           );

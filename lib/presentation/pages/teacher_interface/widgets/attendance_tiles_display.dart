@@ -69,10 +69,13 @@ class TilesForTeacherAttendance {
         userMap["studentsEnrolledNames"]);
     String? name = await userRepository.getUserFirstName();
     String nameNonNull = name ?? "";
-
     List<Card> cards = [];
+
+
     if (userMap["className"] == className) {
-      for (String studentName in studentsEnrolledNames) {
+      for (int i = 0; i < studentsEnrolledNames.length; i++) {
+        String studentId = userMap["studentsEnrolled"][i];
+        String studentName = studentsEnrolledNames[i];
         cards.add(
           Card(
             elevation: 10,
@@ -87,7 +90,7 @@ class TilesForTeacherAttendance {
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            UpdateAttendance(studentName),
+                            UpdateAttendance(studentName, studentId),
                       ),
                     );
                   },
@@ -106,6 +109,7 @@ class TilesForTeacherAttendance {
             ),
           ),
         );
+
       }
     }
     return cards;

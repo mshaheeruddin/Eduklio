@@ -1,11 +1,12 @@
 
 import 'package:eduklio/presentation/dialogs/bloc/add_attendance_bloc/add_attendance_bloc.dart';
 import 'package:eduklio/presentation/pages/animated.dart';
+import 'package:eduklio/presentation/pages/authentication_interface/signin_interface/bloc/signin_bloc.dart';
+import 'package:eduklio/presentation/pages/authentication_interface/signup_interface/bloc/signup_bloc.dart';
 import 'package:eduklio/presentation/pages/student_interface/bloc/enroll_bloc/enroll_bloc.dart';
 import 'package:eduklio/presentation/pages/student_interface/bloc/movement_bloc/movement_bloc.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/bloc/bottombar_homescreen_bloc/text_field_announce_bloc.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/widgets/bloc/student_attendance_tile_bloc/student_attendance_tiles_bloc.dart';
-import 'package:eduklio/presentation/pages/welcome_interface/home_screen.dart';
 import 'package:eduklio/presentation/pages/authentication_interface/signin_interface/login_screen.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/teacher_homescreen.dart';
 import 'package:eduklio/presentation/pages/welcome_interface/welcome_screen.dart';
@@ -49,7 +50,13 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<StudentAttendanceTilesBloc> (
           create: (context) => StudentAttendanceTilesBloc(),
-        )
+        ),
+        BlocProvider<SignupBloc> (
+          create: (context) => SignupBloc(),
+        ),
+        BlocProvider<SigninBloc>(
+          create: (context) => SigninBloc(),
+        ),
       ],
       child: MaterialApp(
         title: 'Eduklio',

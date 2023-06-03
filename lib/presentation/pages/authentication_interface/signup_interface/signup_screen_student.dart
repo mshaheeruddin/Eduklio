@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,6 +10,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../domain/usecases/signup_usecase.dart';
 import '../../../components/MyFacebookButton.dart';
 import '../../../components/MyGoogleButton.dart';
+import '../signin_interface/login_screen.dart';
+import 'bloc/signup_bloc.dart';
 
 class SignupStudent extends StatefulWidget {
   const SignupStudent({Key? key}) : super(key: key);
@@ -18,6 +21,15 @@ class SignupStudent extends StatefulWidget {
 }
 
 class _SignupStudentState extends State<SignupStudent> {
+  String _dropDownValue = "Choose Gender";
+  String _selectedOption = "Choose option";
+
+  void initState() {
+    // TODO: implement initState
+    BlocProvider.of<SignupBloc>(context).add(
+        EmptyFieldEvent(signUpUseCase.studentNameController.text,"-", signUpUseCase.studentEmailController.text,signUpUseCase.studentPasswordController.text, signUpUseCase.studentConfirmPasswordController.text, signUpUseCase.studentInstitutionNameController.text, _dropDownValue, "-", signUpUseCase.studentGradeLevelController.text));
+  }
+
   SignUpUseCase signUpUseCase = SignUpUseCase();
   List<String> _selectedOptions = [];
   final List<String> _options = ['Male', 'Female'];
@@ -128,35 +140,42 @@ class _SignupStudentState extends State<SignupStudent> {
 
                             ),
                           ),
-                          DropdownButtonFormField<String>(
-                              value: null,
-                              items: _options.map((String option) {
-                                return DropdownMenuItem<String>(
-                                  value: option,
-                                  child: Row(
-                                    children: <Widget>[
-                                      Checkbox(
-                                        value: _selectedOptions.contains(option),
-                                        onChanged: (bool? value) {
-                                          setState(() {
-                                            if (value == true) {
-                                              _selectedOptions.add(option);
-                                            } else {
-                                              _selectedOptions.remove(option);
-                                            }
-                                          });
-                                        },
-                                      ),
-                                      Text(option),
-                                    ],
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (String? value) {},
-                              hint: Text('Select Gender'),
-                              decoration: InputDecoration(
-                                  labelText: 'Gender'
-                              )),
+                          BlocBuilder<SignupBloc, SignupState>(
+                            builder: (context, state) {
+                              return DropdownButton(
+                                hint: state is GenderShowingState ? Text(state.gender, style: TextStyle(color: Colors.blue)) : Text('Choose Gender', style: TextStyle(color: Colors.blue),),
+                                isExpanded: true,
+                                iconSize: 30.0,
+                                style: TextStyle(color: Colors.blue),
+                                items: ['Male', 'Female'].map(
+                                      (val) {
+                                    return DropdownMenuItem<String>(
+                                      value: val,
+                                      child: Text(val),
+                                    );
+                                  },
+                                ).toList(),
+                                onTap: () {
+                                  /*BlocProvider.of<SignupBloc>(context).add(
+                          GenderSelectedEvent(_selectedOption));*/
+                                },
+                                onChanged: (val) {
+                                  BlocProvider.of<SignupBloc>(context).add(
+                                      GenderSelectedEvent(val!));
+                                  _dropDownValue = val!;
+                                  /*  setState(
+                            () {
+                          _dropDownValue = val!;
+
+                        }
+                        ,
+                      );
+*/ 
+                                  signUpUseCase.setGender(_dropDownValue);
+                                },
+                              );
+                            },
+                          ),
                           TextField(
                             inputFormatters: [
                               LengthLimitingTextInputFormatter(20)
@@ -179,10 +198,15 @@ class _SignupStudentState extends State<SignupStudent> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            ElevatedButton(onPressed: () {
-                              signUpUseCase.createStudentAccount(context,_selectedOptions[0]);
-                            },
-                              child: Text('SIGNUP'),
+                            BlocBuilder<SignupBloc, SignupState>(
+  builder: (context, state) {
+    return ElevatedButton(onPressed: () {
+                              BlocProvider.of<SignupBloc>(context).add(EmptyFieldEvent(signUpUseCase.studentNameController.text,"-", signUpUseCase.studentEmailController.text,signUpUseCase.studentPasswordController.text, signUpUseCase.studentConfirmPasswordController.text, signUpUseCase.studentInstitutionNameController.text, _dropDownValue, "-", signUpUseCase.studentGradeLevelController.text));
+                              state is SignupValidState ? signUpUseCase.createStudentAccount(context,_selectedOption) : '';
+                              state is SignupValidState ?  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyLogin())): '';
+
+    },
+                              child: state is SignupInvalidState ? Text('FILL IN ALL FIELDS!') :Text('SIGNUP'),
                               style: ButtonStyle(
                                 fixedSize: MaterialStateProperty.all(Size(326, 50)), // change the width and height as required
                                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -190,14 +214,14 @@ class _SignupStudentState extends State<SignupStudent> {
                                     borderRadius: BorderRadius.circular(30.0), // change the value of the radius as required
                                   ),
                                 ),
-                                backgroundColor: Theme.of(context).brightness == Brightness.dark
-                                    ? MaterialStateProperty.all(Colors.black)
-                                    : MaterialStateProperty.all(Color.fromRGBO(
+                                backgroundColor: MaterialStateProperty.all(Color.fromRGBO(
                                     47, 79, 79, 1.0)),
 
                               ),
 
-                            ),
+                            );
+  },
+),
 
                           ],
 

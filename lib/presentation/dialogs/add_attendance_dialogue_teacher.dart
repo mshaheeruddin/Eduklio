@@ -102,14 +102,16 @@ class _AddAttendanceDialogueState extends State<AddAttendanceDialogue> {
             return TextButton(
               onPressed:(state is EmptyTextFieldState) ? null : () {
 
+               log((state is EmptyTextFieldState).toString());
                 String className = _DurationOfClass.text;
                 String studentName = _studentNameController.text;
-                if (className.isNotEmpty && studentName.isNotEmpty) {
+                if (true) {
                   Class newClass = Class(
                       className: className, classCode: studentName);
                   setState(() {
                     widget.classManager.addClass(newClass);
                   });
+
                  classRepository.addAttendance(
                       className,widget.studentName,widget.studentId,getUpdatedDate().text);
                   Navigator.pop(context); // Close the dialog

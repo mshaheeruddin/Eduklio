@@ -8,7 +8,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import '../../presentation/pages/authentication_interface/signup_interface/signup_screen_teacher.dart';
-import '../../presentation/pages/welcome_interface/home_screen.dart';
 
 class SignUpUseCase  {
 

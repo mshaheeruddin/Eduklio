@@ -72,7 +72,7 @@ class _ClassScheduleState extends State<ClassSchedule> {
                   fontWeight: FontWeight.bold
                 ),
               ),
-              SizedBox(height: 5),
+              SizedBox(height: 8),
               Text(
                 'Manage Your daily scheduling',
                 style: TextStyle(

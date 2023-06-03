@@ -14,7 +14,6 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:twitter_login/twitter_login.dart';
 
-import '../../presentation/pages/welcome_interface/home_screen.dart';
 import '../../presentation/pages/teacher_interface/teacher_homescreen.dart';
 
 class SignInUseCase  {
@@ -66,7 +65,7 @@ class SignInUseCase  {
         final AccessToken accessToken = result.accessToken!;
         Navigator.popUntil(context, (route) => route.isFirst);
         Navigator.pushReplacement(context,
-            CupertinoPageRoute(builder: (context) => HomeScreen()));
+            CupertinoPageRoute(builder: (context) => TeacherHomeScreen()));
         // Use the accessToken to get user data or make API calls to Facebook
         break;
       case LoginStatus.cancelled:
@@ -108,7 +107,7 @@ class SignInUseCase  {
       secret: authResult.authTokenSecret!,
     );
     Navigator.popUntil(context, (route) => route.isFirst);
-    Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => HomeScreen()));
+    Navigator.pushReplacement(context, CupertinoPageRoute(builder: (context) => TeacherHomeScreen()));
 
     // Once signed in, return the UserCredential
     return await FirebaseAuth.instance.signInWithCredential(twitterAuthCredential);

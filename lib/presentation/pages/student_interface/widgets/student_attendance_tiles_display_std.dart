@@ -65,15 +65,15 @@ class VerifyAttendanceTiles {
                                       Text('Attendance Record',
                                         style: GoogleFonts.actor(fontSize: 18),
                                       ),
-                                      SizedBox(height: 50,child: CupertinoButton(child:Text(state is VerifiedState ? 'Verified' : 'Verify' , style: GoogleFonts.adventPro(fontSize: 16, color:  state is VerifiedState ? Colors.black: Colors.white),),
+                                      SizedBox(height: 50,child: CupertinoButton(child:Text((state is VerifiedState) || (userMap["isVerified"]) ? 'Verified' : 'Verify' , style: GoogleFonts.adventPro(fontSize: 16, color:  (state is VerifiedState || (userMap["isVerified"])) ? Colors.black: Colors.white),),
                                         onPressed: () {
                                           BlocProvider.of<StudentAttendanceTilesBloc>(context).add(ButtonPressedEvent(isPressed));
                                           repository.updateField("class_attendance", documentId, "isVerified", isPressed);
                                           isPressed = isPressed == true ? false : true;
-                                        }, color: state is VerifiedState ? Colors.green: Colors.black,)),
+                                        }, color: (state is VerifiedState || (userMap["isVerified"])) ? Colors.green: Colors.black,)),
                                     ],
                                   ),
-                                  Divider(color: state is VerifiedState ? Colors.green: Colors.red, thickness: 5,),
+                                  Divider(color: (state is VerifiedState || (userMap["isVerified"])) ? Colors.green: Colors.red, thickness: 5,),
                                   SizedBox(height: 20,),
                                   Text(
                                       'Class conducted: ${userMap["classDate"]}',

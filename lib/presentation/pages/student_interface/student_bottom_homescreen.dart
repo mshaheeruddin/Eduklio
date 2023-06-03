@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eduklio/data/repositories/class_repository.dart';
 import 'package:eduklio/data/repositories/general_repository.dart';
 import 'package:eduklio/data/repositories/user_repository.dart';
 import 'package:eduklio/domain/usecases/manageclass_usecase.dart';
+import 'package:eduklio/presentation/pages/student_interface/assignment_screen_student.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/bloc/bottombar_homescreen_bloc/text_field_announce_bloc.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/manage_class.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,6 +15,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rxdart/rxdart.dart';
 
 class BottomHomeScreen extends StatefulWidget {
 
@@ -32,7 +36,7 @@ class BottomHomeScreen extends StatefulWidget {
 
 class _BottomHomeScreenState extends State<BottomHomeScreen> {
 
-
+  late AssignmentScreenStudent assignmentScreenStudent;
 
   _BottomHomeScreenState();
 
@@ -40,7 +44,7 @@ class _BottomHomeScreenState extends State<BottomHomeScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
+    assignmentScreenStudent= AssignmentScreenStudent(widget.className);
   }
 
 
@@ -155,109 +159,149 @@ class _BottomHomeScreenState extends State<BottomHomeScreen> {
   //listView
 
   //streambuilder to get
+  //streambuilder to get
   Widget realTimeDisplayOfAdding(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
       //subscribed to firestore collection called users
       //so whenever doc is added/changed, we get 'notification'
-      stream: _firestore.collection("teacher_announcements").snapshots(),
+      stream: _firestore.collection("teacher_assignments").snapshots(),
       //snapshot is real time data we will get
       builder: (context, snapshot) {
         //if connection (With firestore) is established then.....
         if (snapshot.connectionState == ConnectionState.active) {
-          if(snapshot.hasData && snapshot.data != null) {
+          if (snapshot.hasData && snapshot.data != null) {
             return Expanded(
               child: ListView.builder(
                 //length as much as doc we have
                 itemCount: snapshot.data!.docs.length,
                 itemBuilder: (context, index) {
                   //from docs array we are now selecting a doc
-                  Map<String, dynamic> userMap = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                  Map<String, dynamic> userMap = snapshot.data!.docs[index]
+                      .data() as Map<String, dynamic>;
                   //get users document id
                   String documentId = snapshot.data!.docs[index].id;
-                  if(widget.className == userMap["className"]) {
-                    return SizedBox(
-                      height: 200,
-                      child: Card(
-                        elevation: 5,
-                        shadowColor: Colors.black,
-                        child: Padding(padding: EdgeInsets.all(10),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Stack(
-                                children: [
-                                  Row(
-                                      mainAxisAlignment: MainAxisAlignment
-                                          .start,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Transform.translate(
-                                            offset: Offset(0, -8),
-                                            child: Container(
-                                              height: 32,
-                                              width: 32,
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(6)),
-                                                color: Colors.grey,
-                                              ),
-                                              child: Icon(
-                                                  CupertinoIcons.person_fill),
+                  if (widget.className == userMap["className"]) {
+                    return FutureBuilder(
+                        future: _getUserNameAsync(
+                            snapshot.data!.docs[index], context),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return Text("Error: ${snapshot.error}");
+                          } else {
+                            return SizedBox(
+                              child: Card(
+                                elevation: 5,
+                                shadowColor: Colors.black,
+                                child: Padding(padding: EdgeInsets.all(10),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Stack(
+                                        children: [
+                                          SafeArea(
+                                            child: Row(
+                                                mainAxisAlignment: MainAxisAlignment
+                                                    .start,
+                                                children: [
+                                                  Padding(
+                                                    padding: const EdgeInsets.all(
+                                                        8.0),
+                                                    child: Transform.translate(
+                                                      offset: Offset(0, -8),
+                                                      child: Container(
+                                                        height: 32,
+                                                        width: 32,
+                                                        decoration: BoxDecoration(
+                                                          borderRadius: BorderRadius
+                                                              .all(
+                                                              Radius.circular(6)),
+                                                          color: Colors.grey,
+                                                        ),
+                                                        child: Icon(
+                                                            CupertinoIcons
+                                                                .person_fill),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(width: 0,),
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(
+                                                        bottom: 12),
+                                                    child: Text(userRepository
+                                                        .getUserName() != null
+                                                        ? userRepository
+                                                        .getUserName()!
+                                                        : snapshot.data!,
+                                                        style: TextStyle(
+                                                            fontSize: 18)),
+                                                  ),
+                                                  /*Padding(
+                                                  padding: EdgeInsets.only(
+                                                      bottom: 15),
+                                                  child: IconButton(
+                                                    onPressed: () {
+                                                      //delete with specific document function comes
+                                                      userRepository
+                                                          .deleteSomethingFromCollection(
+                                                          "teacher_assignments",
+                                                          documentId);
+                                                    },
+                                                    icon: Icon(Icons.delete),),
+                                                )*/
+
+                                                ]
                                             ),
                                           ),
-                                        ),
-                                        SizedBox(width: 3,),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              bottom: 12),
-                                          child: Text('',
-                                              style: TextStyle(fontSize: 18)),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 45, bottom: 15),
-                                          child: IconButton(onPressed: () {
-                                            //delete with specific document function comes
-                                            userRepository.deleteSomethingFromCollection(
-                                                "teacher_announcements",
-                                                documentId);
-                                          },
-                                            icon: Icon(Icons.delete),),
-                                        )
-
-                                      ]
+                                          SizedBox(height: 10,),
+                                        ],
+                                      ),
+                                      Column(
+                                        mainAxisAlignment: MainAxisAlignment
+                                            .start,
+                                        crossAxisAlignment: CrossAxisAlignment
+                                            .start,
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.only(left: 12),
+                                            child: Text(
+                                                'Posted an assignment: ${userMap["assignmentFileName"]} due on: ${userMap["dueDate"]}',
+                                                style: TextStyle(fontSize: 15)),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(left: 12),
+                                            child: Text(
+                                                'Additional Instructions: ${userMap["description"]}',
+                                                style: TextStyle(fontSize: 15)),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(height: 10,),
-                                ],
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 12),
-                                child: Text(userMap["description"] == null
-                                    ? ""
-                                    : userMap["description"],
-                                    style: TextStyle(fontSize: 15)),
-                              ),
-                            ],
-                          ),
 
-                        ),
-                        /* title: Text(currentClass.className),
-                      subtitle: Text(currentClass.classCode),*/
-                      ),
+                                ),
+                                /* title: Text(currentClass.className),
+                        subtitle: Text(currentClass.classCode),*/
+                              ),
+                            );}
+                        }
                     );
-                  }},),
+                  }
+                },),
             );
           }
           else {
             return Text("No Data");
-          }}
+          }
+        }
         else {
           return Center(
             child: CircularProgressIndicator(),
           );
-        }},
+        }
+      },
     );
   }
 
@@ -279,6 +323,11 @@ class _BottomHomeScreenState extends State<BottomHomeScreen> {
       });
     });
   }
+
+
+  //async function
+
+
 
 
 
@@ -331,5 +380,12 @@ class _BottomHomeScreenState extends State<BottomHomeScreen> {
     );
   }
 
+  Future<String?> _getUserNameAsync(DocumentSnapshot document,
+      BuildContext context) async {
+    Map<String, dynamic> userMap = document.data() as Map<String, dynamic>;
+    String documentId = document.id;
 
+    String? name = await userRepository.getFieldFromDocument("users", userMap["userId"],"name");
+    return userRepository.firstNameFormatter(name == null ? '':name);
+  }
 }

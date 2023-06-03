@@ -3,10 +3,14 @@ import 'dart:developer';
 
 
 
+import 'package:eduklio/presentation/dialogs/bloc/add_attendance_bloc/add_attendance_bloc.dart';
+import 'package:eduklio/presentation/pages/authentication_interface/signin_interface/bloc/signin_bloc.dart';
+import 'package:eduklio/presentation/pages/authentication_interface/signup_interface/signup_as_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../domain/usecases/signin_usecase.dart';
@@ -17,7 +21,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../../../domain/usecases/signin_usecase.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import '../../../components/MyTwitterButton.dart';
-import '../../welcome_interface/home_screen.dart';
 
 class MyLogin extends StatefulWidget {
   const MyLogin({Key? key}) : super(key: key);
@@ -33,7 +36,16 @@ class _MyLoginState extends State<MyLogin> {
 
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    BlocProvider.of<SigninBloc>(context).add(EmptySignInFieldEvent(signInUseCase.emailController.text,signInUseCase.passwordController.text));
+  }
+
+  @override
   Widget build(BuildContext context) {
+
+
 
     return Container(
       decoration: BoxDecoration(
@@ -58,7 +70,9 @@ class _MyLoginState extends State<MyLogin> {
                     children: [
 
                       TextField(
-
+                        onChanged: (_) {
+                          BlocProvider.of<SigninBloc>(context).add(EmptySignInFieldEvent(signInUseCase.emailController.text,signInUseCase.passwordController.text));
+                        },
                         controller: signInUseCase.emailController,
                         inputFormatters: [
                           LengthLimitingTextInputFormatter(50)
@@ -78,6 +92,9 @@ class _MyLoginState extends State<MyLogin> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           TextField(
+                            onChanged: (_) {
+                              BlocProvider.of<SigninBloc>(context).add(EmptySignInFieldEvent(signInUseCase.emailController.text,signInUseCase.passwordController.text));
+                            },
                             controller: signInUseCase.passwordController,
                             inputFormatters: [
                               LengthLimitingTextInputFormatter(20)
@@ -91,8 +108,8 @@ class _MyLoginState extends State<MyLogin> {
 
                             ),
                           ),
-                          Gap(30),
-                          Text(
+                          Gap(20),
+                          /*Text(
 
                             'Forgot Password?',
                             style: TextStyle(
@@ -103,15 +120,32 @@ class _MyLoginState extends State<MyLogin> {
                                   ? Colors.black
                                   : Colors.black,
                             ),
+                          ),*/
+
+                          Center(
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => SignupAs()));
+                              },
+                              child: Text(
+                                  "New? Register here",
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.blue
+                                  )
+                              ),
+                            ),
                           ),
+                          SizedBox(height: 20,)
                         ],
                       )
                       ,
-                      Gap(23),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          ElevatedButton(onPressed: () {
+                          BlocBuilder<SigninBloc, SigninState>(
+  builder: (context, state) {
+    return ElevatedButton(onPressed: state is SigninInvalidState ? null :  () {
                                signInUseCase.login(context);
                           },
 
@@ -130,7 +164,9 @@ class _MyLoginState extends State<MyLogin> {
 
                             ),
 
-                          ),
+                          );
+  },
+),
 
                         ],
 

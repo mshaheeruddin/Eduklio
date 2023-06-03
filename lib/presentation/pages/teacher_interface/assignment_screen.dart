@@ -337,7 +337,7 @@ class _AssignmentScreenState extends State<AssignmentScreen> {
         return ElevatedButton(
           onPressed: (state is TextFieldEmptyState) ? null : () {
             storageRepository.uploadFile(pickedFile!);
-            assignmentRepository.addAssignmentAnnouncement(
+            assignmentRepository.addAssignmentAnnouncement("teacher_assignments",
                 widget.className, announceToClass.text,storageRepository.downloadURL,pickedFile,dueOn,userRepository.getUserUID());
 
           }

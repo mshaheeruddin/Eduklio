@@ -60,41 +60,44 @@ class _ManageClassState extends State<ManageClass> {
                     String documentId = snapshot.data!.docs[index].id;
 
                     if(FirebaseAuth.instance.currentUser!.uid == userRepository.getUserUID()) {
-                      return Card(
-                        elevation: 10,
-                        shadowColor: Colors.black,
-                        child: Padding(padding: EdgeInsets.all(10),
-                          child: Column(
-                            children: [
-                              ListTile(
-                                onTap: () {
-                                  Navigator.push(context, MaterialPageRoute(
-                                      builder: (context) =>
-                                          BottomBar(userMap["className"])));
-                                },
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Card(
+                          elevation: 10,
+                          shadowColor: Colors.black,
+                          child: Padding(padding: EdgeInsets.all(10),
+                            child: Column(
+                              children: [
+                                ListTile(
+                                  onTap: () {
+                                    Navigator.push(context, MaterialPageRoute(
+                                        builder: (context) =>
+                                            BottomBar(userMap["className"])));
+                                  },
 
-                                title: Text(userMap["className"],
-                                    style: TextStyle(fontSize: 22)),
-                                subtitle: Text(userMap["classCode"],
-                                    style: TextStyle(fontSize: 15)),
-                                trailing: IconButton(onPressed: () {
-                                  //delete with specific document function comes
-                                  userRepository.deleteSomethingFromCollection("teacher_classes", documentId);
-                                  classRepository.deleteArrayValueFromCollection("teachers", documentId, FirebaseAuth.instance.currentUser!.uid);
-                                  classRepository.deleteArrayValueFromCollection("users", documentId, FirebaseAuth.instance.currentUser!.uid);
-                                  classRepository.deleteArrayValueFromCollection("students", documentId, FirebaseAuth.instance.currentUser!.uid);
+                                  title: Text(userMap["className"],
+                                      style: TextStyle(fontSize: 22)),
+                                  subtitle: Text(userMap["classCode"],
+                                      style: TextStyle(fontSize: 15)),
+                                  trailing: IconButton(onPressed: () {
+                                    //delete with specific document function comes
+                                    userRepository.deleteSomethingFromCollection("teacher_classes", documentId);
+                                    classRepository.deleteArrayValueFromCollection("teachers", documentId, FirebaseAuth.instance.currentUser!.uid);
+                                    classRepository.deleteArrayValueFromCollection("users", documentId, FirebaseAuth.instance.currentUser!.uid);
+                                    classRepository.deleteArrayValueFromCollection("students", documentId, FirebaseAuth.instance.currentUser!.uid);
 
-                                },
-                                  icon: Icon(Icons.delete),
+                                  },
+                                    icon: Icon(Icons.delete),
 
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
+                              ],
+                            ),
 
-                        ),
-                        /* title: Text(currentClass.className),
+                          ),
+                          /* title: Text(currentClass.className),
                     subtitle: Text(currentClass.classCode),*/
+                        ),
                       );
                     }
                   },),

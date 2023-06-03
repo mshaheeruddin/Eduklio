@@ -17,7 +17,7 @@ class AssignmentRepository {
     return formattedTime;
   }
 
-  Future<void> addAssignmentAnnouncement(String className, String description,String downloadURL,PlatformFile? platformFile, String? dueOn, String? userId) async{
+  Future<void> addAssignmentAnnouncement(String collectionName,String className, String description,String downloadURL,PlatformFile? platformFile, String? dueOn, String? userId) async{
     DateTime currentDate = DateTime.now();
     String formattedDate = DateFormat('dd MMMM yyyy').format(currentDate);
     Map<String, dynamic> newUserData = {
@@ -31,7 +31,7 @@ class AssignmentRepository {
       "userId": userId,
 
     };
-    await _firestore.collection("teacher_assignments").add(newUserData);
+    await _firestore.collection(collectionName).add(newUserData);
 
 
 

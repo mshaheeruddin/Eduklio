@@ -1,7 +1,9 @@
+import 'package:eduklio/presentation/pages/authentication_interface/signup_interface/bloc/signup_bloc.dart';
 import 'package:eduklio/presentation/pages/authentication_interface/signup_interface/signup_screen_student.dart';
 import 'package:eduklio/presentation/pages/authentication_interface/signup_interface/signup_screen_teacher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SignupAs extends StatefulWidget {
@@ -29,7 +31,9 @@ class _SignupAsState extends State<SignupAs> {
             ),
             SizedBox(height: 10),
             //TEACHER SIGNUP BUTTON
-            ElevatedButton(onPressed: () {
+            BlocProvider(
+  create: (context) => SignupBloc(),
+  child: ElevatedButton(onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) => SignupTeacher()));
             },
 
@@ -49,8 +53,11 @@ class _SignupAsState extends State<SignupAs> {
               ),
 
             ),
+),
             SizedBox(height: 10),
-            ElevatedButton(onPressed: () {
+            BlocProvider(
+  create: (context) => SignupBloc(),
+  child: ElevatedButton(onPressed: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) => SignupStudent()));
             },
 
@@ -69,6 +76,7 @@ class _SignupAsState extends State<SignupAs> {
               ),
 
             ),
+),
           ],
         ),
       ),

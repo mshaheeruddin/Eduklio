@@ -1,7 +1,10 @@
 import 'package:eduklio/domain/usecases/signup_usecase.dart';
+import 'package:eduklio/presentation/pages/authentication_interface/signin_interface/login_screen.dart';
+import 'package:eduklio/presentation/pages/authentication_interface/signup_interface/bloc/signup_bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -22,18 +25,18 @@ class SignupTeacher extends StatefulWidget {
 class _SignupTeacherState extends State<SignupTeacher> {
 
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    BlocProvider.of<SignupBloc>(context).add(
+        EmptyFieldEvent(signUpUseCase.fNameController.text,signUpUseCase.fNameController.text, signUpUseCase.emailController.text,signUpUseCase.passwordController.text, signUpUseCase.confirmPasswordController.text, signUpUseCase.schoolNameController.text, "male", signUpUseCase.teachingExperienceController.text, signUpUseCase.qualificationController.text));
+  }
 
   SignUpUseCase signUpUseCase = SignUpUseCase();
   //List<String> _selectedOptions = [];
   //final List<DropdownMenu> _options = ['Male', 'Female'];
   String _selectedOption = "Choose option";
-  void dropDownCallback(dynamic selectedValue) {
-     if(selectedValue is String) {
-       setState(() {
-         _selectedOption = selectedValue;
-       });
-     }
-  }
+
 
   String _dropDownValue = "Choose Gender";
 
@@ -79,6 +82,7 @@ class _SignupTeacherState extends State<SignupTeacher> {
 
                       //Full Name
                       TextField(
+
                         controller: signUpUseCase.fNameController,
                         textInputAction: TextInputAction.next,
                         decoration: InputDecoration(
@@ -158,13 +162,10 @@ class _SignupTeacherState extends State<SignupTeacher> {
 
                             ),
                           ),
-                  DropdownButton(
-                    hint: _dropDownValue == null
-                        ? Text('Choose Gender')
-                        : Text(
-                      _dropDownValue,
-                      style: TextStyle(color: Colors.blue),
-                    ),
+                  BlocBuilder<SignupBloc, SignupState>(
+  builder: (context, state) {
+    return DropdownButton(
+                    hint: state is GenderShowingState ? Text(state.gender, style: TextStyle(color: Colors.blue)) : Text('Choose Gender', style: TextStyle(color: Colors.blue),),
                     isExpanded: true,
                     iconSize: 30.0,
                     style: TextStyle(color: Colors.blue),
@@ -176,18 +177,26 @@ class _SignupTeacherState extends State<SignupTeacher> {
                         );
                       },
                     ).toList(),
+                    onTap: () {
+                      /*BlocProvider.of<SignupBloc>(context).add(
+                          GenderSelectedEvent(_selectedOption));*/
+                    },
                     onChanged: (val) {
-                      setState(
+                      BlocProvider.of<SignupBloc>(context).add(
+                          GenderSelectedEvent(val!));
+                    /*  setState(
                             () {
                           _dropDownValue = val!;
 
                         }
                         ,
                       );
-
+*/                     
                      signUpUseCase.setGender(_dropDownValue);
                     },
-                  ),
+                  );
+  },
+),
 
 /*
                           DropdownButtonFormField<String>(
@@ -233,6 +242,9 @@ class _SignupTeacherState extends State<SignupTeacher> {
                             ),
                           ),
                           TextField(
+                            onChanged: (val) {
+
+                            },
                             controller: signUpUseCase.qualificationController,
                             inputFormatters: [
                               LengthLimitingTextInputFormatter(20)
@@ -254,9 +266,15 @@ class _SignupTeacherState extends State<SignupTeacher> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            ElevatedButton(onPressed: () {
-                                    signUpUseCase.createTeacherAccount(context, _selectedOption);
+                            BlocBuilder<SignupBloc, SignupState>(
+  builder: (context, state) {
+    return ElevatedButton(onPressed: state is SignupInvalidState ? null : () {
+              BlocProvider.of<SignupBloc>(context).add(EmptyFieldEvent(signUpUseCase.fNameController.text,signUpUseCase.fNameController.text, signUpUseCase.emailController.text,signUpUseCase.passwordController.text, signUpUseCase.confirmPasswordController.text, signUpUseCase.schoolNameController.text, "male", signUpUseCase.teachingExperienceController.text, signUpUseCase.qualificationController.text));
+
+                                  state is SignupValidState ? signUpUseCase.createTeacherAccount(context, _selectedOption) : '';
+                                  state is SignupValidState ?  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyLogin())): '';
                             },
+
                               child: Text('SIGNUP'),
                               style: ButtonStyle(
                                 fixedSize: MaterialStateProperty.all(Size(326, 50)), // change the width and height as required
@@ -265,14 +283,14 @@ class _SignupTeacherState extends State<SignupTeacher> {
                                     borderRadius: BorderRadius.circular(30.0), // change the value of the radius as required
                                   ),
                                 ),
-                                backgroundColor: Theme.of(context).brightness == Brightness.dark
-                                    ? MaterialStateProperty.all(Colors.black)
-                                    : MaterialStateProperty.all(Color.fromRGBO(
+                                backgroundColor: MaterialStateProperty.all(Color.fromRGBO(
                                     47, 79, 79, 1.0)),
 
                               ),
 
-                            ),
+                            );
+  },
+),
 
                           ],
 

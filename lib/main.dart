@@ -3,6 +3,7 @@ import 'package:eduklio/presentation/dialogs/bloc/add_attendance_bloc/add_attend
 import 'package:eduklio/presentation/pages/animated.dart';
 import 'package:eduklio/presentation/pages/authentication_interface/signin_interface/bloc/signin_bloc.dart';
 import 'package:eduklio/presentation/pages/authentication_interface/signup_interface/bloc/signup_bloc.dart';
+import 'package:eduklio/presentation/pages/student_interface/bloc/dp_bloc/dp_bloc.dart';
 import 'package:eduklio/presentation/pages/student_interface/bloc/enroll_bloc/enroll_bloc.dart';
 import 'package:eduklio/presentation/pages/student_interface/bloc/movement_bloc/movement_bloc.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/bloc/bottombar_homescreen_bloc/text_field_announce_bloc.dart';
@@ -56,6 +57,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<SigninBloc>(
           create: (context) => SigninBloc(),
+        ),
+        BlocProvider<DpBloc>(
+          create: (context) => DpBloc(),
         ),
       ],
       child: MaterialApp(

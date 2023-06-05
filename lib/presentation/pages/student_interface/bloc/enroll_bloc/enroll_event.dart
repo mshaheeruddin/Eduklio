@@ -8,15 +8,18 @@ class EnrollClickedEvent extends EnrollEvent{
   EnrollClickedEvent(this.isClicked);
 }
 class EnrollSubjectSelectionEvent extends EnrollEvent{
-  bool isClicked = false;
   String selectedValue;
-  EnrollSubjectSelectionEvent(this.isClicked, this.selectedValue);
+  EnrollSubjectSelectionEvent(this.selectedValue);
+}
+
+class SubmittingEvent extends EnrollEvent {
+  String selectedValue;
+  SubmittingEvent(this.selectedValue);
 }
 
 class EnrollTeacherSelectionEvent extends EnrollEvent{
-  bool isClicked = false;
   String selectedValue;
-  EnrollTeacherSelectionEvent(this.isClicked, this.selectedValue);
+  EnrollTeacherSelectionEvent(this.selectedValue);
 }
 
 

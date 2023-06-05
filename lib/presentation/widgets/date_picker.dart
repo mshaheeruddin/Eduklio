@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -9,12 +11,75 @@ class DatePicker extends StatefulWidget {
 }
 
 class _DatePickerState extends State<DatePicker> {
-  final weekList = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  final weekList = ['Sun','Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  List<int> weekDayIndex = [0,0,0,0,0,0,0];
   final dayList = ['24', '25', '26', '27', '28','29', '30'];
+  String dateTime = DateTime.now().day.toString();
   var selected = 4;
+
+  void _populateDayList() {
+ /*   int day = DateTime.now().weekday;
+
+    switch (day) {
+      case 1:
+        weekDayIndex[0] = day - 1;
+        break;
+      case 2:
+        weekDayIndex[1] = day-1;
+        break;
+      case 3:
+        weekDayIndex[2] = day-1;
+        break;
+      case 4:
+        weekDayIndex[3] = day-1;
+        break;
+      case 5:
+        weekDayIndex[4] = day-1;
+        break;
+      case 6:
+        weekDayIndex[5] = day-1;
+        break;
+      case 7:
+        weekDayIndex[6] = day-1;
+        break;
+      default:
+        print('Unknown cart operation');
+        break;
+    }*/
+       log(weekDayIndex.toString());
+        for (int i = 0; i< weekList.length; i++) {
+            dayList[DateTime.now().weekday - i -1] = (int.parse(dateTime) + i).toString();
+        }
+       /*for (int i = 0; i< weekList.length; i++) {
+         dayList[weekList.length - i - 1] = dayList[i];
+         log('${dayList[weekList.length - i - 1]} -------> ${dayList[i]}');
+       }*/
+      /* [log] 10 -------> 10
+    [log] 9 -------> 9
+    [log] 8 -------> 8
+    [log] 7 -------> 7
+    [log] 8 -------> 8
+    [log] 9 -------> 9
+    [log] 10 -------> 10*/
+
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _populateDayList();
+  }
+
 
   @override
   Widget build(BuildContext context) {
+
+
+
+
+
     return Container(
       height: 100,
       padding: EdgeInsets.symmetric(vertical: 20),

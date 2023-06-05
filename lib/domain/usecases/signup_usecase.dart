@@ -1,12 +1,15 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:eduklio/data/repositories/user_repository.dart';
 import 'package:eduklio/presentation/pages/authentication_interface/signup_interface/signup_screen_teacher.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:uuid/uuid.dart';
 import '../../presentation/pages/authentication_interface/signup_interface/signup_screen_teacher.dart';
 
 class SignUpUseCase  {
@@ -86,7 +89,7 @@ class SignUpUseCase  {
     String schoolName = studentInstitutionNameController.text;
     String gender = selectedGender;
     String gradeLevel = studentGradeLevelController.text;
-
+    File? profilePic;
     if (email == "" || password == "" || cPassword == "" ) {
       log("Please fill in all the fields");
     }
@@ -94,13 +97,17 @@ class SignUpUseCase  {
       log("Password do not match");
     }
     else {
+
       UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
-        await _firestore
+
+
+      await _firestore
           .collection('users').doc(userCredential.user?.uid)
           .set({
         'name': name,
         'gender':selectedGender,
         'email': email,
+        "profilePic": "",
         'password': password,
         'userType': 'Student',
         'schoolName': schoolName,

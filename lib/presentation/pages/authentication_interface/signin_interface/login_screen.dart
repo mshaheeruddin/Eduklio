@@ -11,7 +11,6 @@ import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:gap/gap.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../domain/usecases/signin_usecase.dart';
 import '../../../../domain/usecases/signin_usecase.dart';
@@ -108,7 +107,7 @@ class _MyLoginState extends State<MyLogin> {
 
                             ),
                           ),
-                          Gap(20),
+                          SizedBox(height: 20,),
                           /*Text(
 
                             'Forgot Password?',

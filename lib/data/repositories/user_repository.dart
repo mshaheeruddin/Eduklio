@@ -1,3 +1,6 @@
+
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -41,6 +44,13 @@ class UserRepository {
   }
 
   Future<void> addToArray(String userId,String collectionName, String fieldName,String valueToAdd) async {
+    log(userId);
+    log(collectionName);
+    log(fieldName);
+    log(valueToAdd);
+
+
+
     final userRef = FirebaseFirestore.instance.collection(collectionName).doc(userId);
 
     await userRef.update({

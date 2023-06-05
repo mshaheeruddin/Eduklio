@@ -40,8 +40,9 @@ class RealTimeDisplayOfTiles {
                 String documentId = snapshot.data!.docs[index].id;
                 bool condition = false;
                 List<dynamic> studentsEnrolled = userMap["studentsEnrolled"];
-
+                log(studentsEnrolled.length.toString());
                 for (int i=0;i<studentsEnrolled.length;i++) {
+                  log(userMap["studentsEnrolled"][i]);
                   if (userRepository.getUserUID() == userMap["studentsEnrolled"][i]) {
                     condition = true;
                   }

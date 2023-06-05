@@ -3,15 +3,19 @@ import 'dart:core';
 
 
 import 'package:eduklio/domain/usecases/manageclass_usecase.dart';
+import 'package:eduklio/presentation/pages/student_interface/profile_screen.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/assignment_screen.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/attendance_screen.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/bloc/bottombar_homescreen_bloc/text_field_announce_bloc.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/subject_home_screen.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/manage_class.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../data/models/twitter_user_model.dart';
 
 class BottomBar extends StatefulWidget {
  String className = "";
@@ -24,7 +28,6 @@ class BottomBar extends StatefulWidget {
 class _BottomBarState extends State<BottomBar> {
 
   _BottomBarState();
-
   late final List<Widget> _widgetOptions;
 Widget getSubjectWidget() {
   return SubjectScreen(widget.className);
@@ -41,7 +44,7 @@ Widget getSubjectWidget() {
 ),
       AssignmentScreen(widget.className),
       AttendanceScreen(widget.className),
-      const Text("Profile")
+      ProfilePage(user:FirebaseAuth.instance.currentUser!)
     ];
   }
 

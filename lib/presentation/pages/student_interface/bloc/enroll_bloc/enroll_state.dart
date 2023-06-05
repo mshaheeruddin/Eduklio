@@ -7,6 +7,13 @@ class EnrollInitial extends EnrollState {}
 
 class EnrollDialogueBoxLaunchState extends EnrollState {}
 
+
+class DialogueBoxOpenState extends EnrollState {
+  bool isClicked;
+  DialogueBoxOpenState(this.isClicked);
+}
+
+
 class EnrollSubjectedSelectedState extends EnrollState {
   String selectedValue;
   EnrollSubjectedSelectedState(this.selectedValue);

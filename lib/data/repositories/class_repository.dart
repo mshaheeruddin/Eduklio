@@ -34,11 +34,12 @@ UserRepository userRepository = UserRepository();
     }
 
     for(var classid in classesIds) {
-      Future<dynamic> idgotten = userRepository.getFieldFromDocument("teacher_classes",classid, "className");
-      idgotten.then((result) {
-        availableClasses.add(result!);
-      } );
+      String idgotten = await userRepository.getFieldFromDocument(
+          "teacher_classes", classid, "className");
+
+      availableClasses.add(idgotten);
     }
+
 
     if(byName) {return availableClasses;}
     return classesIds;
@@ -50,22 +51,22 @@ UserRepository userRepository = UserRepository();
     //fetching all documents (only) not actual data
     //QuerySnapshot is a container for documents[Collection] (it contains it)
     QuerySnapshot snapshot = await _firestore.collection(collectionName).get();
+
     List<String> ids = [];
     List<String> availableTeachers = [];
     //get data from snapshot that holds the document
     //so do doc.data() to get data inside document
     for(var doc in snapshot.docs) {
+      log("doc id: "+ doc.id );
       ids.add(doc.id);
     }
 
     for(var id in ids) {
-      Future<dynamic> idgotten = userRepository.getFieldFromDocument("users",id, "name");
-      idgotten.then((result) {
-        availableTeachers.add(userRepository.firstNameFormatter(result)!);
-      } );
+      String idgotten = await userRepository.getFieldFromDocument("users",id, "name");
+      availableTeachers.add(idgotten);
     }
-
     if (byName) {
+      log(availableTeachers[0].toString());
       return availableTeachers;
     }
     return ids;

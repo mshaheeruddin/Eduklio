@@ -5,12 +5,15 @@ import 'dart:core';
 import 'package:eduklio/domain/usecases/manageclass_usecase.dart';
 import 'package:eduklio/presentation/pages/student_interface/assignment_screen_student.dart';
 import 'package:eduklio/presentation/pages/student_interface/attendance_student.dart';
+import 'package:eduklio/presentation/pages/student_interface/bloc/dp_bloc/dp_bloc.dart';
+import 'package:eduklio/presentation/pages/student_interface/profile_screen.dart';
 import 'package:eduklio/presentation/pages/student_interface/student_bottom_homescreen.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/assignment_screen.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/attendance_screen.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/bloc/bottombar_homescreen_bloc/text_field_announce_bloc.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/subject_home_screen.dart';
 import 'package:eduklio/presentation/pages/teacher_interface/manage_class.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluentui_icons/fluentui_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +52,10 @@ Widget getSubjectWidget() {
   create: (context) => StudentAttendanceTilesBloc(),
   child: AttendanceStudent(),
 ),
-      const Text("Profile")
+      BlocProvider(
+  create: (context) => DpBloc(),
+  child: ProfilePage(user:FirebaseAuth.instance.currentUser!),
+)
     ];
   }
 

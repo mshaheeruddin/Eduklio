@@ -66,7 +66,7 @@ class VerifyAttendanceTiles {
                                         style: GoogleFonts.actor(fontSize: 18),
                                       ),
                                       SizedBox(height: 50,child: CupertinoButton(child:Text((state is VerifiedState) || (userMap["isVerified"]) ? 'Verified' : 'Verify' , style: GoogleFonts.adventPro(fontSize: 16, color:  (state is VerifiedState || (userMap["isVerified"])) ? Colors.black: Colors.white),),
-                                        onPressed: () {
+                                        onPressed: ()  {
                                           BlocProvider.of<StudentAttendanceTilesBloc>(context).add(ButtonPressedEvent(isPressed));
                                           repository.updateField("class_attendance", documentId, "isVerified", isPressed);
                                           isPressed = isPressed == true ? false : true;

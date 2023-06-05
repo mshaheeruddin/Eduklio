@@ -43,7 +43,14 @@ class _ManageClassStudentState extends State<ManageClassStudent> {
     super.initState();
     _populateTeachersListByName();
     _populateTeachersListByIds();
-    log(_position.toString());
+    _makeItMap();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+
   }
 
   String className = "";
@@ -55,11 +62,6 @@ class _ManageClassStudentState extends State<ManageClassStudent> {
   Repository repository = Repository();
   RealTimeDisplayOfTiles realTimeTiles = RealTimeDisplayOfTiles();
   Widget build(BuildContext context) {
-  
-  
-  
-
-
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -119,27 +121,8 @@ class _ManageClassStudentState extends State<ManageClassStudent> {
                 padding: const EdgeInsets.all(8.0),
                 child: GestureDetector(
                   onTap: () {
-                    _populateTeachersListByName();
-                    _populateTeachersListByIds();
-                    /*BlocProvider.of<MovementBloc>(context).add(
-                        ClickedOnEnrollEvent(
-                            true, _position));*/
-                    if(state is GoDownState) _position = state.position;
-                    log(availableClassesIds.toString() + "Class ids");
-                    log(availableTeachersIds.toString() + "Class ids");
-                    BlocProvider.of<EnrollBloc>(context)
-                        .add(EnrollClickedEvent(true));
-                    teacherNameToTeacherIdMap = _populateListsToMap(
-                        availableTeachers, availableTeachersIds);
-                    classNameToClassIdMap = _populateListsToMap(
-                        availableClasses, availableClassesIds);
-                    var s = _populateMapOfIdsToIds(teacherNameToTeacherIdMap, classNameToClassIdMap);
-                    if(s != null) {
-                      mapOfIdsToIds = s;
-                    }
-                    if (state is EnrollDialogueBoxLaunchState) {
-                      _showAlertBox();
-                    }
+                    BlocProvider.of<EnrollBloc>(context).add(
+                        EnrollClickedEvent(true));
                   },
                   child: DottedBorder(
                     borderType: BorderType.RRect,
@@ -150,19 +133,10 @@ class _ManageClassStudentState extends State<ManageClassStudent> {
                     child: BlocBuilder<EnrollBloc, EnrollState>(
                       builder: (context, state) {
                         return GestureDetector(
+
                           onTap: () {
-                            _populateTeachersListByName();
-                            _populateTeachersListByIds();
-                            BlocProvider.of<EnrollBloc>(context)
-                                .add(EnrollClickedEvent(true));
-                             teacherNameToTeacherIdMap = _populateListsToMap(
-                                availableTeachers, availableTeachersIds);
-                             classNameToClassIdMap = _populateListsToMap(
-                                availableClasses, availableClassesIds);
-                            var s = _populateMapOfIdsToIds(teacherNameToTeacherIdMap, classNameToClassIdMap);
-                            if(s != null) {
-                              mapOfIdsToIds = s;
-                            }
+                            BlocProvider.of<EnrollBloc>(context).add(
+                                EnrollClickedEvent(true));
                             if (state is EnrollDialogueBoxLaunchState) {
                               _showAlertBox();
                             }
@@ -218,9 +192,11 @@ class _ManageClassStudentState extends State<ManageClassStudent> {
   Map<String, String> classNameToClassIdMap = {};
   //populate available teachers
   Future<void> _populateTeachersListByName() async {
-    availableClasses =
-        await classRepository.getAllClasses("teacher_classes", true);
+    availableClasses = await classRepository.getAllClasses("teacher_classes", true);
+    selectedSubject = availableClasses[0];
     availableTeachers = await classRepository.getAllTeachers("teachers", true);
+    selectedTeacher = availableTeachers[0];
+    log("teacher name----> " + availableTeachers[0]);
   }
 
   //populate available teachers
@@ -229,8 +205,9 @@ class _ManageClassStudentState extends State<ManageClassStudent> {
         await classRepository.getAllClasses("teacher_classes", false);
     availableTeachersIds =
         await classRepository.getAllTeachers("teachers", false);
+    log("teacher id----> " + availableTeachersIds[0]);
   }
-
+  bool _isSelected = false;
   Map<String, String> teacherSubjectMap = {};
   void _showAlertBox() async {
     await showDialog(
@@ -242,7 +219,7 @@ class _ManageClassStudentState extends State<ManageClassStudent> {
             content: Column(children: [
               DropdownButton<String>(
                 hint: Text('Choose subject'),
-                value: _selected ? selectedSubject : null,
+                value: state is EnrollSubjectedSelectedState ? state.selectedValue : selectedSubject,
                 isExpanded: true,
                 items: availableClasses.map((String value) {
                   return DropdownMenuItem<String>(
@@ -254,23 +231,17 @@ class _ManageClassStudentState extends State<ManageClassStudent> {
                   );
                 }).toList(),
                 onChanged: (newValue) {
-                  if (newValue!.isNotEmpty)
-                    BlocProvider.of<EnrollBloc>(context).add(
-                        EnrollSubjectSelectionEvent(true, selectedSubject));
-                  log(newValue!.isNotEmpty.toString());
-                  WidgetsBinding.instance!.addPostFrameCallback((_) {
-                    if (state is EnrollSubjectedSelectedState) {
-                      log((state is EnrollSubjectedSelectedState).toString());
-                    }
-                  });
+                  _isSelected = true;
+                  if (newValue!.isNotEmpty) {
+                    selectedSubject = newValue;
+                    BlocProvider.of<EnrollBloc>(context).add(EnrollSubjectSelectionEvent(newValue));
+                  }
+                  },
 
-                  selectedSubject = newValue!;
-                  _selected = true;
-                },
               ),
               DropdownButton<String>(
                 hint: Text('Choose Teacher'),
-                value: _isSelectedTeacher ? selectedTeacher : null,
+                value: state is EnrollTeacherSelectedState ? state.selectedValue : selectedTeacher,
                 isExpanded: true,
                 items: availableTeachers.map((String value) {
                   return DropdownMenuItem<String>(
@@ -282,15 +253,10 @@ class _ManageClassStudentState extends State<ManageClassStudent> {
                   );
                 }).toList(),
                 onChanged: (newValue) {
-                  if (newValue!.isNotEmpty)
-                    BlocProvider.of<EnrollBloc>(context).add(
-                        EnrollTeacherSelectionEvent(true, selectedSubject));
-                  log(newValue!.isNotEmpty.toString());
-                  log((state is EnrollTeacherSelectedState).toString());
-
-                  selectedTeacher = newValue!;
                   _isSelectedTeacher = true;
-                  newValue = "";
+                  selectedTeacher = newValue!;
+                    BlocProvider.of<EnrollBloc>(context).add(
+                        EnrollTeacherSelectionEvent(newValue!));
                 },
               ),
             ]),
@@ -300,19 +266,13 @@ class _ManageClassStudentState extends State<ManageClassStudent> {
                   return TextButton(
                       child: Text('Enroll'),
                       onPressed: () async {
-                        BlocProvider.of<MovementBloc>(context).add(
-                            ClickedOnEnrollEvent(
-                                true, _position));
-                         log('emitted');
-                        BlocProvider.of<EnrollBloc>(context).add(
-                            EnrollButtonPressedEvent(
-                                true, selectedSubject, selectedTeacher));
                         //ADD TO USERS(students)
+                        log("3 ----->"+ selectedSubject);
                         userRepository.addToArray(
                             FirebaseAuth.instance.currentUser!.uid,
                             "users",
                             "enrolledClasses",
-                            _getSelectedOptionIds(selectedSubject, false) != null ? _getSelectedOptionIds(selectedSubject, false)! : "");
+                            _getSelectedOptionIds(selectedSubject , false) != null ? _getSelectedOptionIds(selectedSubject, false)! : "");
                         userRepository.addToArray(
                             FirebaseAuth.instance.currentUser!.uid,
                             "students",
@@ -406,14 +366,39 @@ class _ManageClassStudentState extends State<ManageClassStudent> {
 
 
   String? _getSelectedOptionIds(String? option, bool isTeacher) {
-    if (isTeacher) {
-        return teacherNameToTeacherIdMap[option];
+    log("WHY WHY WHY" + option!);
+    if(!isTeacher) {
+      log(subjectIdToSubjectNameMap[option]!);
+      return subjectIdToSubjectNameMap[option];
     }
     else {
-      return classNameToClassIdMap[option];
+      return classNameToClassIdMap[option];// Value not found
     }
   }
 
+
+
+
+// get teachers and class
+  Future<List<String>> getAllDocumentIds(String collectionName) async {
+    final CollectionReference collection =
+    FirebaseFirestore.instance.collection(collectionName);
+
+    final QuerySnapshot snapshot = await collection.get();
+
+    return snapshot.docs.map((doc) => doc.id).toList();
+  }
+  Map<String, String> subjectIdToSubjectNameMap = {};
+  Future<void> _makeItMap() async {
+    Map<String, String> subjectToIdMap = {};
+    List<String> idsOfClasses = await getAllDocumentIds("teacher_classes");
+    for (var id in idsOfClasses) {
+      String names = await userRepository.getFieldFromDocument("teacher_classes", id, "className");
+         subjectToIdMap[names] = id;
+    }
+    subjectIdToSubjectNameMap = subjectToIdMap;
+    log(subjectToIdMap.toString());
+  }
 
 
 

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:eduklio/presentation/pages/student_interface/bloc/dp_bloc/dp_bloc.dart';
 import 'package:meta/meta.dart';
 
 part 'enroll_event.dart';
@@ -14,14 +15,13 @@ class EnrollBloc extends Bloc<EnrollEvent, EnrollState> {
       }
     });
     on<EnrollSubjectSelectionEvent>((event, emit) {
-        if (event.isClicked == true) {
           emit(EnrollSubjectedSelectedState(event.selectedValue));
-        }
+    });
+    on<SubmittingEvent>((event, emit) {
+      emit(SubmittingState(event.selectedValue));
     });
     on<EnrollTeacherSelectionEvent>((event, emit) {
-      if (event.isClicked == true) {
         emit(EnrollTeacherSelectedState(event.selectedValue));
-      }
     });
     on<EnrollButtonPressedEvent>((event, emit) {
       if (event.isClicked == true) {
